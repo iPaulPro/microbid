@@ -6,23 +6,33 @@ import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.s
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Types } from "./constants/Types.sol";
+import { MicroBidToken } from "./MicroBidToken.sol";
 
 contract MicroBidAuction is Ownable, ReentrancyGuard {
 	using SafeERC20 for ERC20;
 
 	/**
-	 * @dev The amount the price increases with each bid
+	 * @dev The amount the price increases with each bid in USDC
 	 */
 	uint16 internal constant PRICE_INCREASE_STEP = 10000; // a penny
 
-	uint16 internal constant INITIAL_DURATION_BLOCKS = 300;
-	uint16 internal constant EXTENSION_DURATION_BLOCKS = 10;
+	/**
+	 * @dev The initial duration of the auction in blocks
+	 */
+	uint16 internal constant INITIAL_DURATION_BLOCKS = 300; // around 5 min
+
+	/**
+	 * @dev The duration of the auction extension, with each bid placed, in blocks
+	 */
+	uint16 internal constant EXTENSION_DURATION_BLOCKS = 10; // around 20 sec
 
 	error AuctionAlreadyStarted();
-	error AuctionNotActive();
+	error AuctionNotStarted();
 	error AuctionEnded();
 	error AuctionNotEnded();
 	error AuctionAlreadyClaimed();
+	error UnauthorizedClaimer();
+	error InsufficientFunds();
 
 	event AuctionAdded(uint256 indexed id, string metadataURI);
 	event AuctionStarted(uint256 indexed id);
@@ -38,15 +48,16 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	mapping(uint256 itemId => uint256 totalBids) public totalBidsOnItems;
 	mapping(uint256 itemId => mapping(address bidder => uint256 numBids))
 		public bids;
+	mapping(address bidder => uint256[] auctionIds) public userBidAuctions;
 
-	ERC20 public bidToken;
+	MicroBidToken public bidToken;
 	ERC20 public collateralToken;
 
 	uint256 public itemCount;
 
 	constructor(
 		address owner,
-		ERC20 _bidToken,
+		MicroBidToken _bidToken,
 		ERC20 _collateralToken
 	) Ownable(owner) {
 		bidToken = _bidToken;
@@ -96,6 +107,106 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 		return item.totalBids * PRICE_INCREASE_STEP;
 	}
 
+	/**
+	 * @notice Get the list of auction IDs the given user has bid on
+	 * @param user The address of the user
+	 * @return The list of auction IDs
+	 */
+	function getUserBidAuctions(
+		address user
+	) external view returns (uint256[] memory) {
+		return userBidAuctions[user];
+	}
+
+	/**
+	 * @notice Get the estimated end time of the given item
+	 * @param itemId The ID of the auction item
+	 * @return The estimated end time
+	 */
+	function getEstimatedEndTime(uint256 itemId) public view returns (uint256) {
+		Types.AuctionItem storage item = auctionItems[itemId];
+		uint256 blocksRemaining = item.endBlock > block.number
+			? item.endBlock - block.number
+			: 0;
+		return block.timestamp + (blocksRemaining * 2 seconds); // Assuming 2-second block times
+	}
+
+	/**
+	 * @notice Check if the auction has ended
+	 * @param itemId The ID of the auction item
+	 * @return True if the auction has ended
+	 */
+	function isAuctionEnded(uint256 itemId) public view returns (bool) {
+		Types.AuctionItem storage item = auctionItems[itemId];
+		return block.number >= item.endBlock;
+	}
+
+	/**
+	 * @notice Place a bid on the given item
+	 * @param itemId The ID of the auction item
+	 */
+	function placeBid(uint256 itemId) external nonReentrant {
+		Types.AuctionItem storage item = auctionItems[itemId];
+		if (!item.isActive) {
+			revert AuctionNotStarted();
+		}
+		if (block.number >= item.endBlock) {
+			revert AuctionEnded();
+		}
+
+		// TODO ensure bidder holds PoP credential
+
+		if (bidToken.balanceOf(msg.sender) < 1) {
+			revert InsufficientFunds();
+		}
+
+		bidToken.burn(msg.sender, 1);
+
+		item.totalBids = item.totalBids + 1;
+		item.latestBidder = msg.sender;
+		item.endBlock = block.number + EXTENSION_DURATION_BLOCKS;
+		totalBidsOnItems[itemId] += 1;
+		bids[itemId][msg.sender] += 1;
+
+		// Add the auction to the user's list if it's their first bid
+		if (bids[itemId][msg.sender] == 1) {
+			userBidAuctions[msg.sender].push(itemId);
+		}
+
+		emit BidPlaced(
+			itemId,
+			msg.sender,
+			totalBidsOnItems[itemId],
+			item.endBlock
+		);
+	}
+
+	function claim(uint256 itemId) external {
+		Types.AuctionItem storage item = auctionItems[itemId];
+		if (item.isActive || block.number < item.endBlock) {
+			revert AuctionNotEnded();
+		}
+		if (item.claimed) {
+			revert AuctionAlreadyClaimed();
+		}
+		if (msg.sender != item.latestBidder) {
+			revert UnauthorizedClaimer();
+		}
+
+		uint256 amount = item.totalBids * PRICE_INCREASE_STEP;
+		if (collateralToken.balanceOf(msg.sender) < amount) {
+			revert InsufficientFunds();
+		}
+
+		collateralToken.safeTransferFrom(msg.sender, address(this), amount);
+
+		item.claimed = true;
+	}
+
+	/*
+	 * Owner functions
+	 */
+
 	function addItem(string memory metadataURI) external onlyOwner {
 		uint256 itemId = itemCount++;
 		auctionItems[itemId] = Types.AuctionItem({
@@ -103,7 +214,7 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 			isActive: false,
 			endBlock: 0,
 			totalBids: 0,
-			highestBidder: address(0),
+			latestBidder: address(0),
 			metadataURI: metadataURI,
 			claimed: false
 		});
@@ -129,44 +240,17 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 		emit AuctionItemMetadataUpdated(itemId, metadataURI);
 	}
 
-	function placeBid(uint256 itemId) external nonReentrant {
-		Types.AuctionItem storage item = auctionItems[itemId];
-		if (!item.isActive) {
-			revert AuctionNotActive();
-		}
-		if (block.number >= item.endBlock) {
-			revert AuctionEnded();
-		}
-
-		// TODO ensure bidder holds PoP credential
-
-		bidToken.safeTransferFrom(msg.sender, address(this), 1);
-
-		item.totalBids = item.totalBids + 1;
-		item.highestBidder = msg.sender;
-		item.endBlock = block.number + EXTENSION_DURATION_BLOCKS;
-		totalBidsOnItems[itemId] += 1;
-		bids[itemId][msg.sender] += 1;
-
-		emit BidPlaced(
-			itemId,
-			msg.sender,
-			totalBidsOnItems[itemId],
-			item.endBlock
+	function withdraw(address recipient) external onlyOwner {
+		collateralToken.safeTransfer(
+			recipient,
+			collateralToken.balanceOf(address(this))
 		);
 	}
 
-	function claim(uint256 itemId) external onlyOwner {
-		Types.AuctionItem storage item = auctionItems[itemId];
-		if (item.isActive || block.number < item.endBlock) {
-			revert AuctionNotEnded();
-		}
-		if (item.claimed) {
-			revert AuctionAlreadyClaimed();
-		}
-
-		item.claimed = true;
-		uint amount = item.totalBids * PRICE_INCREASE_STEP;
-		collateralToken.safeTransfer(owner(), amount);
+	function recoverERC20(
+		address tokenAddress,
+		uint256 tokenAmount
+	) external onlyOwner {
+		ERC20(tokenAddress).transfer(owner(), tokenAmount);
 	}
 }
