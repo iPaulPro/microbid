@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity 0.8.24;
 
+import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import { IERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import { Types } from "./constants/Types.sol";
 import { MicroBidToken } from "./MicroBidToken.sol";
+import { IAttester } from "./interfaces/IAttester.sol";
 
 contract MicroBidAuction is Ownable, ReentrancyGuard {
 	using SafeERC20 for ERC20;
@@ -33,6 +36,7 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	error AuctionAlreadyClaimed();
 	error UnauthorizedClaimer();
 	error InsufficientFunds();
+	error UnauthorizedCaller();
 
 	event AuctionAdded(uint256 indexed id, string metadataURI);
 	event AuctionStarted(uint256 indexed id);
@@ -51,17 +55,20 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	mapping(address bidder => uint256[] auctionIds) public userBidAuctions;
 
 	MicroBidToken public bidToken;
-	ERC20 public collateralToken;
+	address public collateralToken;
+	IAttester public attester;
 
 	uint256 public itemCount;
 
 	constructor(
 		address owner,
 		MicroBidToken _bidToken,
-		ERC20 _collateralToken
+		address _collateralToken,
+		IAttester _attester
 	) Ownable(owner) {
 		bidToken = _bidToken;
 		collateralToken = _collateralToken;
+		attester = _attester;
 	}
 
 	/**
@@ -154,7 +161,9 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 			revert AuctionEnded();
 		}
 
-		// TODO ensure bidder holds PoP credential
+		if (!attester.isVerified(msg.sender)) {
+			revert UnauthorizedCaller();
+		}
 
 		if (bidToken.balanceOf(msg.sender) < 1) {
 			revert InsufficientFunds();
@@ -181,7 +190,13 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 		);
 	}
 
-	function claim(uint256 itemId) external {
+	function claim(
+		uint256 itemId,
+		uint256 deadline,
+		uint8 v,
+		bytes32 r,
+		bytes32 s
+	) external {
 		Types.AuctionItem storage item = auctionItems[itemId];
 		if (item.isActive || block.number < item.endBlock) {
 			revert AuctionNotEnded();
@@ -194,11 +209,26 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 		}
 
 		uint256 amount = item.totalBids * PRICE_INCREASE_STEP;
-		if (collateralToken.balanceOf(msg.sender) < amount) {
+		if (IERC20(collateralToken).balanceOf(msg.sender) < amount) {
 			revert InsufficientFunds();
 		}
 
-		collateralToken.safeTransferFrom(msg.sender, address(this), amount);
+		IERC20Permit(collateralToken).permit(
+			msg.sender,
+			address(this),
+			amount,
+			deadline,
+			v,
+			r,
+			s
+		);
+
+		SafeERC20.safeTransferFrom(
+			IERC20(collateralToken),
+			msg.sender,
+			address(this),
+			amount
+		);
 
 		item.claimed = true;
 	}
@@ -241,9 +271,10 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	}
 
 	function withdraw(address recipient) external onlyOwner {
-		collateralToken.safeTransfer(
+		SafeERC20.safeTransfer(
+			IERC20(collateralToken),
 			recipient,
-			collateralToken.balanceOf(address(this))
+			IERC20(collateralToken).balanceOf(address(this))
 		);
 	}
 

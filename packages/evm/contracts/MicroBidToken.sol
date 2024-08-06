@@ -23,6 +23,7 @@ contract MicroBidToken is ERC20, ERC20Permit, AccessControl {
 	constructor(
 		address minter
 	) ERC20("MicroBidToken", "MBT") ERC20Permit("MicroBidToken") {
+		_grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 		_grantRole(MINTER_ROLE, minter);
 		_grantRole(BURNER_ROLE, minter);
 	}

@@ -14,6 +14,7 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 
 	/// @notice Thrown when attempting to reuse a nullifier
 	error InvalidNullifier();
+	error AttesterNotSet();
 
 	event ContractDeployed();
 
@@ -23,9 +24,7 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 
 	/// @dev Emitted when the attester for the contract is set or updated.
 	/// @param attester The address of the attester.
-	event AttesterSet(address indexed attester);
-
-	event AttestationCreated(bytes32 uid);
+	event AttesterUpdated(address indexed attester);
 
 	/// @dev The World ID instance that will be used for verifying proofs
 	IWorldID internal immutable worldId;
@@ -34,7 +33,7 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 	uint256 internal immutable externalNullifier;
 
 	/// @dev The World ID group ID
-	uint8 internal immutable groupId;
+	uint8 internal immutable groupId = 1;
 
 	/// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person
 	mapping(uint256 => bool) internal nullifierHashes;
@@ -45,26 +44,27 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 	/// @param _appId The World ID app ID
 	/// @param _actionId The World ID action ID
 	constructor(
-		address owner,
+		address _owner,
 		IWorldID _worldId,
 		string memory _appId,
-		string memory _actionId
-	) Ownable(owner) {
+		string memory _actionId,
+		IAttester _attester
+	) Ownable(_owner) {
 		worldId = _worldId;
+		attester = _attester;
 		externalNullifier = abi
 			.encodePacked(abi.encodePacked(_appId).hashToField(), _actionId)
 			.hashToField();
 
 		// Initialize first slot to prevent replay attack
 		nullifierHashes[0] = true;
-		groupId = 1; // Orb verification only
 
 		emit ContractDeployed();
 	}
 
-	function setAttester(IAttester _attester) public onlyOwner {
+	function setAttester(IAttester _attester) external onlyOwner {
 		attester = _attester;
-		emit AttesterSet(address(attester));
+		emit AttesterUpdated(address(attester));
 	}
 
 	/// @param _root The root of the Merkle tree.
@@ -74,8 +74,8 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 		uint256 _root,
 		uint256 _nullifierHash,
 		uint256[8] calldata _proof
-	) public nonReentrant returns (bytes32) {
-		require(attester != IAttester(address(0)), "Attester not set");
+	) external nonReentrant returns (bytes32) {
+		if (address(attester) == address(0)) revert AttesterNotSet();
 
 		// First, we make sure this person hasn't done this before
 		if (nullifierHashes[_nullifierHash]) revert InvalidNullifier();
@@ -96,15 +96,16 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 		emit VerificationSuccessful(msg.sender);
 
 		Types.PoPSchema memory data = Types.PoPSchema({
-			action: "verify",
-			signal: msg.sender,
-			credential_type: groupId,
-			timestamp: uint64(block.timestamp)
+			nullifierHash: _nullifierHash
 		});
 
-		bytes32 uid = attester.createAttestation(data);
-		emit AttestationCreated(uid);
-
+		bytes32 uid = attester.createAttestation(msg.sender, data);
 		return uid;
+	}
+
+	function getNullifierHash(
+		uint256 _nullifierHash
+	) external view returns (bool) {
+		return nullifierHashes[_nullifierHash];
 	}
 }

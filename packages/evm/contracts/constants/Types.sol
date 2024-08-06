@@ -24,15 +24,9 @@ library Types {
 
 	/**
 	 * @notice A struct containing information about a Proof of Personhood schema
-	 * @param action The action being performed
-	 * @param signal The address of the signal
-	 * @param credential_type The type of credential being used
-	 * @param timestamp The timestamp of the action
+	 * @param nullifierHash The hash of the nullifier
 	 */
 	struct PoPSchema {
-		string action;
-		address signal;
-		uint8 credential_type;
-		uint64 timestamp;
+		uint256 nullifierHash;
 	}
 }
