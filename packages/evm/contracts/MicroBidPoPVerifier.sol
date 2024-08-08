@@ -38,7 +38,7 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 	/// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person
 	mapping(uint256 => bool) internal nullifierHashes;
 
-	IAttester internal attester;
+	IAttester public attester;
 
 	/// @param _worldId The WorldID instance that will verify the proofs
 	/// @param _appId The World ID app ID
@@ -67,10 +67,12 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 		emit AttesterUpdated(address(attester));
 	}
 
+	/// @param _signal The address of the submitter.
 	/// @param _root The root of the Merkle tree.
 	/// @param _nullifierHash The nullifier hash for this proof, preventing double signaling.
 	/// @param _proof The zero-knowledge proof that demonstrates the claimer is registered with World ID.
 	function verify(
+		address _signal,
 		uint256 _root,
 		uint256 _nullifierHash,
 		uint256[8] calldata _proof
@@ -84,7 +86,7 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 		worldId.verifyProof(
 			_root,
 			groupId,
-			abi.encodePacked(msg.sender).hashToField(),
+			abi.encodePacked(_signal).hashToField(),
 			_nullifierHash,
 			externalNullifier,
 			_proof
@@ -93,13 +95,13 @@ contract MicroBidPoPVerifier is Ownable, ReentrancyGuard {
 		// We now record the user has done this, so they can't do it again (proof of uniqueness)
 		nullifierHashes[_nullifierHash] = true;
 
-		emit VerificationSuccessful(msg.sender);
+		emit VerificationSuccessful(_signal);
 
 		Types.PoPSchema memory data = Types.PoPSchema({
 			nullifierHash: _nullifierHash
 		});
 
-		bytes32 uid = attester.createAttestation(msg.sender, data);
+		bytes32 uid = attester.createAttestation(_signal, data);
 		return uid;
 	}
 
