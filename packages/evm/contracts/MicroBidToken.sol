@@ -13,6 +13,9 @@ contract MicroBidToken is ERC20, ERC20Permit, AccessControl {
 
     uint8 private constant _decimals = 0;
 
+    event BidTokensMinted(address indexed to, uint256 amount);
+    event BidTokenBurned(address indexed from);
+
     error DecimalsNotSupported();
 
     modifier onlyZeroDecimals(uint256 amount) {
@@ -39,6 +42,7 @@ contract MicroBidToken is ERC20, ERC20Permit, AccessControl {
         uint256 amount
     ) external onlyRole(MINTER_ROLE) onlyZeroDecimals(amount) {
         _mint(to, amount);
+        emit BidTokensMinted(to, amount);
     }
 
     function burn(
@@ -46,6 +50,7 @@ contract MicroBidToken is ERC20, ERC20Permit, AccessControl {
         uint256 amount
     ) external onlyRole(BURNER_ROLE) onlyZeroDecimals(amount) {
         _burn(from, amount);
+        emit BidTokenBurned(from);
     }
 
     function transfer(

@@ -9,11 +9,13 @@ import {
 } from "@account-kit/react";
 import { IDKitWidget, ISuccessResult } from "@worldcoin/idkit";
 import { encodeFunctionData, decodeAbiParameters, formatUnits } from "viem";
-import { useEffect, useState } from "react";
-import { popVerifierAbi } from "@/lib/popVerifierAbi";
-import { attesterAbi } from "@/lib/attesterAbi";
-import { erc20Abi } from "@/lib/erc20Abi";
-import { treasuryAbi } from "@/lib/treasuryAbi";
+import { useEffect, useRef, useState } from "react";
+import { popVerifierAbi } from "@/lib/abi/popVerifierAbi";
+import { attesterAbi } from "@/lib/abi/attesterAbi";
+import { erc20Abi } from "@/lib/abi/erc20Abi";
+import { treasuryAbi } from "@/lib/abi/treasuryAbi";
+import { auctionAbi } from "@/lib/abi/auctionAbi";
+import useInterval from "use-interval";
 
 export default function Home() {
   const user = useUser();
@@ -24,6 +26,9 @@ export default function Home() {
   const [verified, setVerified] = useState<boolean>(false);
   const [bidTokenBalance, setBidTokenBalance] = useState<bigint>(0n);
   const [usdcTokenBalance, setUsdcTokenBalance] = useState<bigint>(0n);
+  const [auctionRefreshCounter, setAuctionRefreshCounter] = useState(0);
+  const [auctionItem, setAuctionItem] = useState<AuctionItem>();
+  const [auctionEnded, setAuctionEnded] = useState(false);
 
   const { client } = useSmartAccountClient({ type: "LightAccount" });
 
@@ -53,7 +58,46 @@ export default function Home() {
     })) as Promise<bigint>;
   }
 
+  async function getAuctionItem(itemId: bigint) {
+    if (!client || !user) return;
+    const data = await client.readContract({
+      address: process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+      abi: auctionAbi,
+      functionName: "getAuctionItem",
+      args: [itemId],
+    });
+    console.log("getAuctionItem", data);
+
+    const metadataURI = data.metadataURI.replace(
+      "ar://",
+      "https://arweave.net/",
+    );
+    const metadata: AuctionItemMetadata = await fetch(metadataURI).then((res) =>
+      res.json(),
+    );
+
+    const auctionItem: AuctionItem = {
+      id: 1n,
+      isStarted: data.isStarted,
+      totalBids: data.totalBids,
+      latestBidder: data.latestBidder,
+      isClaimed: data.claimed,
+      metadata,
+    };
+    setAuctionItem(auctionItem);
+    console.log("auctionItem", auctionItem);
+
+    const endedData = await client.readContract({
+      address: process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+      abi: auctionAbi,
+      functionName: "isAuctionEnded",
+      args: [itemId],
+    });
+    setAuctionEnded(endedData);
+  }
+
   useEffect(() => {
+    if (verified) return;
     const fetchVerified = async () => {
       const verified = await isVerified();
       console.log("isVerified", verified, user);
@@ -82,6 +126,19 @@ export default function Home() {
     };
     fetchUsdcTokenBalance();
   }, [verified]);
+
+  useInterval(
+    () => {
+      setAuctionRefreshCounter((counter) => counter + 1);
+    },
+    30_000,
+    true,
+  );
+
+  useEffect(() => {
+    if (!client || !user) return;
+    getAuctionItem(1n);
+  }, [auctionRefreshCounter]);
 
   function onProofSuccess(result: ISuccessResult) {
     console.log("IDKitWidget: onSuccess", result);
@@ -131,7 +188,7 @@ export default function Home() {
       },
     });
 
-    console.log("buyBidTokens: approved");
+    console.log("buyBidTokens: approved treasury for USDC");
 
     const data = encodeFunctionData({
       abi: treasuryAbi,
@@ -147,6 +204,80 @@ export default function Home() {
     });
 
     console.log("buyBidTokens: minted");
+
+    const approveUSDCAuctionData = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [
+        process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+        1_000_000_000_000n,
+      ],
+    });
+
+    await sendUserOperationAsync({
+      uo: {
+        target: process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS! as `0x${string}`,
+        data: approveUSDCAuctionData,
+      },
+    });
+
+    console.log("buyBidTokens: approved auction for USDC");
+  }
+
+  async function placeBid() {
+    if (!client) return;
+
+    const data = encodeFunctionData({
+      abi: auctionAbi,
+      functionName: "placeBid",
+      args: [1n],
+    });
+
+    await sendUserOperationAsync({
+      uo: {
+        target: process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+        data,
+      },
+    });
+
+    console.log("placeBid: placed");
+  }
+
+  async function submitClaim() {
+    if (!client) return;
+
+    const approveUSDCData = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [
+        process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+        1_000_000_000_000n,
+      ],
+    });
+
+    await sendUserOperationAsync({
+      uo: {
+        target: process.env.NEXT_PUBLIC_USDC_TOKEN_ADDRESS! as `0x${string}`,
+        data: approveUSDCData,
+      },
+    });
+
+    console.log("buyBidTokens: approved auction for USDC");
+
+    const data = encodeFunctionData({
+      abi: auctionAbi,
+      functionName: "claim",
+      args: [1n],
+    });
+
+    await sendUserOperationAsync({
+      uo: {
+        target: process.env.NEXT_PUBLIC_AUCTION_ADDRESS! as `0x${string}`,
+        data,
+      },
+    });
+
+    console.log("submitClaim: claimed");
   }
 
   return (
@@ -192,6 +323,27 @@ export default function Home() {
               >
                 Buy bid tokens
               </button>
+              {auctionItem && !auctionEnded && (
+                <button
+                  className="btn btn-primary"
+                  disabled={bidTokenBalance === 0n || !auctionItem?.isStarted}
+                  onClick={placeBid}
+                >
+                  Place a bid
+                </button>
+              )}
+              {auctionItem &&
+                auctionEnded &&
+                !auctionItem.isClaimed &&
+                auctionItem.latestBidder === client?.getAddress() && (
+                  <div className="flex flex-col gap-2 justify-center">
+                    <p>You won the auction!</p>
+                    <button className="btn btn-primary" onClick={submitClaim}>
+                      Purchase Item $
+                      {(Number(auctionItem.totalBids) / 100).toFixed(2)}
+                    </button>
+                  </div>
+                )}
             </div>
           ) : proof ? (
             <button
@@ -204,7 +356,9 @@ export default function Home() {
           ) : (
             client && (
               <IDKitWidget
-                app_id={process.env.NEXT_PUBLIC_WORLD_ID_APP_ID!}
+                app_id={
+                  process.env.NEXT_PUBLIC_WORLD_ID_APP_ID! as `app_${string}`
+                }
                 action={process.env.NEXT_PUBLIC_WORLD_ID_ACTION_ID!}
                 signal={client.getAddress()}
                 onSuccess={onProofSuccess}

@@ -1,0 +1,12 @@
+{
+  "name": "Ledger Nano S Plus",
+  "description": "This is the first auction item",
+  "image": "ipfs://QmWzCXrGBoknEjrRZ7QJbHZZn7Nw4U5NUzGu6D1ZH8LYZH",
+  "value": 14900,
+  "attributes": {
+    "manufacturer": "Ledger",
+    "model": "Nano S Plus",
+    "color": "Black",
+    "connection": "USB-C"
+  }
+}

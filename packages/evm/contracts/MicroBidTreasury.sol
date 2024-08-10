@@ -17,10 +17,9 @@ contract MicroBidTreasury is Ownable {
 
     event BidTokensMinted(address indexed recipient, uint256 amount);
 
-    // 1 USDC = 1 MBT
-    uint256 public constant USDC_PER_BID_TOKEN = 10 ** 6;
+    uint8 public constant BIDS_PER_DOLLAR = 10;
 
-    uint8 internal constant MULTIPLIER = 10; // TODO Remove when deploying to mainnet.
+    uint256 internal constant USDC_DECIMALS = 10 ** 6;
 
     address public immutable usdc;
     IBidToken public immutable bidToken;
@@ -64,26 +63,28 @@ contract MicroBidTreasury is Ownable {
     }
 
     function withdraw(address recipient, uint256 amount) external onlyOwner {
-        ERC20(usdc).safeTransfer(recipient, amount);
+        uint256 value = amount;
+        if (value == 0) {
+            value = ERC20(usdc).balanceOf(address(this));
+        }
+        ERC20(usdc).safeTransfer(recipient, value);
     }
 
     function _validateMintInput(address to, uint256 amount) internal view {
         if (to == address(0)) revert InvalidRecipient();
-        if (amount < USDC_PER_BID_TOKEN) revert InvalidAmount();
+        if (amount < USDC_DECIMALS) revert InvalidAmount();
         if (!attester.isVerified(to)) revert UnauthorizedRecipient();
     }
 
     function _mintBidTokens(address to, uint256 amount) internal {
-        _validateMintInput(to, amount);
-
         // Calculate the whole number of USDC tokens to transfer
-        uint256 wholeUSDC = amount - (amount % USDC_PER_BID_TOKEN);
+        uint256 wholeUSDC = amount - (amount % USDC_DECIMALS);
 
         // Transfer USDC tokens from the recipient to the contract
         ERC20(usdc).safeTransferFrom(to, address(this), wholeUSDC);
 
         // Calculate the number of bid tokens to mint
-        uint256 mintAmount = wholeUSDC / USDC_PER_BID_TOKEN * MULTIPLIER;
+        uint256 mintAmount = wholeUSDC / USDC_DECIMALS * BIDS_PER_DOLLAR;
 
         // Mint the bid tokens
         bidToken.mint(to, mintAmount);

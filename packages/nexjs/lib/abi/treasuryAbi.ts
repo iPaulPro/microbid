@@ -140,12 +140,12 @@ export const treasuryAbi = [
   },
   {
     inputs: [],
-    name: "USDC_PER_BID_TOKEN",
+    name: "BIDS_PER_DOLLAR",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "uint8",
         name: "",
-        type: "uint256",
+        type: "uint8",
       },
     ],
     stateMutability: "view",

@@ -5,7 +5,7 @@ library Types {
     /**
      * @notice A struct containing information about an auction item
 	 * @param itemId The ID of the auction item
-	 * @param isActive Whether the auction is active
+	 * @param isStarted Whether the auction was started
 	 * @param endBlock The block at which the auction ends
 	 * @param totalBids The total number of bids on the auction
 	 * @param latestBidder The address of the latest bidder
@@ -14,7 +14,7 @@ library Types {
 	 */
     struct AuctionItem {
         uint256 itemId;
-        bool isActive;
+        bool isStarted;
         uint256 endBlock;
         uint256 totalBids;
         address latestBidder;

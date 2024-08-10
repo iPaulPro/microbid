@@ -36,9 +36,10 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
     error UnauthorizedClaimer();
     error InsufficientFunds();
     error UnauthorizedCaller();
+    error AlreadyWinning();
 
     event AuctionAdded(uint256 indexed id, string metadataURI);
-    event AuctionStarted(uint256 indexed id);
+    event AuctionStarted(uint256 indexed id, uint256 endBlock);
     event AuctionItemMetadataUpdated(uint256 indexed id, string metadataURI);
     event BidPlaced(
         uint256 indexed id,
@@ -46,6 +47,7 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
         uint256 totalBids,
         uint256 endBlock
     );
+    event AuctionClaimed(uint256 indexed id, address indexed claimer);
 
     MicroBidToken public immutable bidToken;
     address public immutable collateralToken;
@@ -54,8 +56,7 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 
     mapping(uint256 itemId => Types.AuctionItem item) public auctionItems;
     mapping(uint256 itemId => uint256 totalBids) public totalBidsOnItems;
-    mapping(uint256 itemId => mapping(address bidder => uint256 numBids))
-    public bids;
+    mapping(uint256 itemId => mapping(address bidder => uint256 numBids)) public bids;
     mapping(address bidder => uint256[] auctionIds) public userBidAuctions;
 
     uint256 public itemCount;
@@ -134,6 +135,9 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	 */
     function getEstimatedEndTime(uint256 itemId) public view returns (uint256) {
         Types.AuctionItem storage item = auctionItems[itemId];
+        if (block.number > item.endBlock) {
+            return item.endBlock;
+        }
         uint256 blocksRemaining = item.endBlock > block.number
             ? item.endBlock - block.number
             : 0;
@@ -156,28 +160,22 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	 */
     function placeBid(uint256 itemId) external nonReentrant {
         Types.AuctionItem storage item = auctionItems[itemId];
-        if (!item.isActive) {
-            revert AuctionNotStarted();
-        }
-        if (block.number >= item.endBlock) {
-            revert AuctionEnded();
-        }
-
-        if (!attester.isVerified(msg.sender)) {
-            revert UnauthorizedCaller();
-        }
-
-        if (bidToken.balanceOf(msg.sender) < 1) {
-            revert InsufficientFunds();
-        }
+        if (!item.isStarted) revert AuctionNotStarted();
+        if (block.number >= item.endBlock) revert AuctionEnded();
+        if (!attester.isVerified(msg.sender)) revert UnauthorizedCaller();
+        if (bidToken.balanceOf(msg.sender) < 1) revert InsufficientFunds();
+        if (item.latestBidder == msg.sender) revert AlreadyWinning();
 
         bidToken.burn(msg.sender, 1);
 
         item.totalBids = item.totalBids + 1;
         item.latestBidder = msg.sender;
-        item.endBlock = block.number + EXTENSION_DURATION_BLOCKS;
         totalBidsOnItems[itemId] += 1;
         bids[itemId][msg.sender] += 1;
+
+        if (block.number + EXTENSION_DURATION_BLOCKS > item.endBlock) {
+            item.endBlock = block.number + EXTENSION_DURATION_BLOCKS;
+        }
 
         // Add the auction to the user's list if it's their first bid
         if (bids[itemId][msg.sender] == 1) {
@@ -193,6 +191,27 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
     }
 
     function claim(
+        uint256 itemId
+    ) external {
+        Types.AuctionItem storage item = auctionItems[itemId];
+
+        if (block.number < item.endBlock) revert AuctionNotEnded();
+        if (item.claimed) revert AuctionAlreadyClaimed();
+        if (msg.sender != item.latestBidder) revert UnauthorizedClaimer();
+
+        uint256 amount = item.totalBids * PRICE_INCREASE_STEP;
+        if (ERC20(collateralToken).balanceOf(msg.sender) < amount) {
+            revert InsufficientFunds();
+        }
+
+        ERC20(collateralToken).safeTransferFrom(msg.sender, treasury, amount);
+
+        item.claimed = true;
+
+        emit AuctionClaimed(itemId, msg.sender);
+    }
+
+    function claimWithSig(
         uint256 itemId,
         uint256 deadline,
         uint8 v,
@@ -200,15 +219,10 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
         bytes32 s
     ) external {
         Types.AuctionItem storage item = auctionItems[itemId];
-        if (item.isActive || block.number < item.endBlock) {
-            revert AuctionNotEnded();
-        }
-        if (item.claimed) {
-            revert AuctionAlreadyClaimed();
-        }
-        if (msg.sender != item.latestBidder) {
-            revert UnauthorizedClaimer();
-        }
+
+        if (block.number < item.endBlock) revert AuctionNotEnded();
+        if (item.claimed) revert AuctionAlreadyClaimed();
+        if (msg.sender != item.latestBidder) revert UnauthorizedClaimer();
 
         uint256 amount = item.totalBids * PRICE_INCREASE_STEP;
         if (ERC20(collateralToken).balanceOf(msg.sender) < amount) {
@@ -228,6 +242,8 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
         ERC20(collateralToken).safeTransferFrom(msg.sender, treasury, amount);
 
         item.claimed = true;
+
+        emit AuctionClaimed(itemId, msg.sender);
     }
 
     /*
@@ -235,27 +251,27 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
      */
 
     function addItem(string memory metadataURI) external onlyOwner {
-        uint256 itemId = itemCount++;
-        auctionItems[itemId] = Types.AuctionItem({
-            itemId: itemId,
-            isActive: false,
+        itemCount++;
+        auctionItems[itemCount] = Types.AuctionItem({
+            itemId: itemCount,
+            isStarted: false,
             endBlock: 0,
             totalBids: 0,
             latestBidder: address(0),
             metadataURI: metadataURI,
             claimed: false
         });
-        emit AuctionAdded(itemId, metadataURI);
+        emit AuctionAdded(itemCount, metadataURI);
     }
 
     function startAuction(uint256 itemId) external onlyOwner {
         Types.AuctionItem storage item = auctionItems[itemId];
-        if (item.isActive) {
+        if (item.isStarted) {
             revert AuctionAlreadyStarted();
         }
-        item.isActive = true;
+        item.isStarted = true;
         item.endBlock = block.number + INITIAL_DURATION_BLOCKS;
-        emit AuctionStarted(itemId);
+        emit AuctionStarted(itemId, item.endBlock);
     }
 
     function updateAuctionMetadata(
@@ -268,9 +284,10 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
     }
 
     function recoverERC20(
+        address to,
         address tokenAddress,
         uint256 tokenAmount
     ) external onlyOwner {
-        ERC20(tokenAddress).transfer(owner(), tokenAmount);
+        ERC20(tokenAddress).transfer(to, tokenAmount);
     }
 }
