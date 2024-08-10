@@ -9,7 +9,7 @@ const deployMicroBidAttester: DeployFunction = async function (hre: HardhatRunti
 
   await deploy("MicroBidAttester", {
     from: deployer,
-    args: [deployer, process.env.EAS_ADDRESS, process.env.EAS_SCHEMA, verifierAddress],
+    args: [deployer, process.env.EAS_ADDRESS, verifierAddress, process.env.EAS_SCHEMA_UID],
     log: true,
     autoMine: true,
   });

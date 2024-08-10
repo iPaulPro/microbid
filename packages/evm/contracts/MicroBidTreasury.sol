@@ -1,58 +1,93 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { ERC20Permit } from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
-import { SafeERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
-import { IBidToken } from "./interfaces/IBidToken.sol";
-import { IAttester } from "./interfaces/IAttester.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {IBidToken} from "./interfaces/IBidToken.sol";
+import {IAttester} from "./interfaces/IAttester.sol";
+import {IFiatToken} from "./interfaces/IFiatToken.sol";
 
 contract MicroBidTreasury is Ownable {
-	using SafeERC20 for ERC20;
+    using SafeERC20 for ERC20;
 
-	error UnauthorizedRecipient();
+    error InvalidRecipient();
+    error InvalidAmount();
+    error UnauthorizedRecipient();
 
-	address public immutable usdc;
-	IBidToken public immutable bidToken;
-	IAttester public immutable attester;
+    event BidTokensMinted(address indexed recipient, uint256 amount);
 
-	/**
-	 * @param owner The owner of the contract
+    // 1 USDC = 1 MBT
+    uint256 public constant USDC_PER_BID_TOKEN = 10 ** 6;
+
+    uint8 internal constant MULTIPLIER = 10; // TODO Remove when deploying to mainnet.
+
+    address public immutable usdc;
+    IBidToken public immutable bidToken;
+    IAttester public immutable attester;
+
+    /**
+     * @param owner The owner of the contract
 	 * @param _usdc The USDC address
-	 * @param _bidToken The bid token address
-	 * @param _attester The attester address
+	 * @param _bidToken The bid token contract
+	 * @param _attester The attester contract
 	 */
-	constructor(
-		address owner,
-		address _usdc,
-		IBidToken _bidToken,
-		IAttester _attester
-	) Ownable(owner) {
-		usdc = _usdc;
-		bidToken = _bidToken;
-		attester = _attester;
-	}
+    constructor(
+        address owner,
+        address _usdc,
+        IBidToken _bidToken,
+        IAttester _attester
+    ) Ownable(owner) {
+        usdc = _usdc;
+        bidToken = _bidToken;
+        attester = _attester;
+    }
 
-	function mintBidTokens(
-		address to,
-		uint256 amount,
-		uint256 deadline,
-		uint8 v,
-		bytes32 r,
-		bytes32 s
-	) external onlyOwner {
-		if (!attester.isVerified(to)) {
-			revert UnauthorizedRecipient();
-		}
+    function mintBidTokens(address to, uint256 amount) external {
+        _validateMintInput(to, amount);
+        _mintBidTokens(to, amount);
+    }
 
-		ERC20Permit(usdc).permit(to, address(this), amount, deadline, v, r, s);
-		ERC20(usdc).safeTransferFrom(to, address(this), amount);
+    function mintBidTokensWithSig(
+        address to,
+        uint256 amount,
+        uint256 deadline,
+        bytes memory signature
+    ) external {
+        _validateMintInput(to, amount);
 
-		bidToken.mint(to, amount);
-	}
+        // Approve the contract to spend the USDC
+        IFiatToken(usdc).permit(to, address(this), amount, deadline, signature);
 
-	function withdraw(address recipient, uint256 amount) external onlyOwner {
-		ERC20(usdc).safeTransfer(recipient, amount);
-	}
+        // Mint the bid tokens
+        _mintBidTokens(to, amount);
+    }
+
+    function withdraw(address recipient, uint256 amount) external onlyOwner {
+        ERC20(usdc).safeTransfer(recipient, amount);
+    }
+
+    function _validateMintInput(address to, uint256 amount) internal view {
+        if (to == address(0)) revert InvalidRecipient();
+        if (amount < USDC_PER_BID_TOKEN) revert InvalidAmount();
+        if (!attester.isVerified(to)) revert UnauthorizedRecipient();
+    }
+
+    function _mintBidTokens(address to, uint256 amount) internal {
+        _validateMintInput(to, amount);
+
+        // Calculate the whole number of USDC tokens to transfer
+        uint256 wholeUSDC = amount - (amount % USDC_PER_BID_TOKEN);
+
+        // Transfer USDC tokens from the recipient to the contract
+        ERC20(usdc).safeTransferFrom(to, address(this), wholeUSDC);
+
+        // Calculate the number of bid tokens to mint
+        uint256 mintAmount = wholeUSDC / USDC_PER_BID_TOKEN * MULTIPLIER;
+
+        // Mint the bid tokens
+        bidToken.mint(to, mintAmount);
+
+        emit BidTokensMinted(to, mintAmount);
+    }
 }

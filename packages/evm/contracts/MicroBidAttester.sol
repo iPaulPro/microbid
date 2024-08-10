@@ -27,9 +27,13 @@ contract MicroBidAttester is IAttester, Ownable {
 	/// @param verifier The address of the verifier.
 	event VerifierUpdated(address indexed verifier);
 
-	IEAS internal immutable eas;
+	string public constant SCHEMA = "uint256 nullifierHash";
 
-	bytes32 internal schema;
+	bool internal constant REVOCABLE = true; // TODO Make false when deploying to mainnet.
+
+	bytes32 public immutable schemaUid;
+
+	IEAS internal immutable eas;
 
 	address internal verifier;
 
@@ -38,17 +42,17 @@ contract MicroBidAttester is IAttester, Ownable {
 	/**
 	 * @param owner The owner of the contract
 	 * @param _eas The Ethereum Attestation Service instance
-	 * @param _schema The schema of the attestation
+	 * @param _verifier The PoP verifier address
 	 */
 	constructor(
 		address owner,
 		IEAS _eas,
-		bytes32 _schema,
-		address _verifier
+		address _verifier,
+		bytes32 _schemaUid
 	) Ownable(owner) {
 		eas = _eas;
-		schema = _schema;
 		verifier = _verifier;
+		schemaUid = _schemaUid;
 	}
 
 	function setVerifier(address _verifier) public onlyOwner {
@@ -85,20 +89,20 @@ contract MicroBidAttester is IAttester, Ownable {
 		bytes memory encodedData = abi.encode(data);
 
 		AttestationRequest memory request = AttestationRequest({
-			schema: schema,
+			schema: schemaUid,
 			data: AttestationRequestData({
 				data: encodedData,
 				recipient: recipient,
-				expirationTime: NO_EXPIRATION_TIME, // No expiration time
-				revocable: false,
-				refUID: EMPTY_UID, // No references UI
-				value: 0 // No value/ETH
+				expirationTime: NO_EXPIRATION_TIME,
+				revocable: REVOCABLE,
+				refUID: EMPTY_UID,
+				value: 0
 			})
 		});
 
 		bytes32 uid = eas.attest(request);
 		attestations[recipient] = uid;
-		emit AttestationCreated(uid, schema, encodedData, recipient);
+		emit AttestationCreated(uid, schemaUid, encodedData, recipient);
 
 		return uid;
 	}

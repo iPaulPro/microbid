@@ -12,7 +12,7 @@
     viem "2.8.6"
     zod "^3.22.4"
 
-"@account-kit/core@^4.0.0-alpha.10":
+"@account-kit/core@4.0.0-alpha.10", "@account-kit/core@^4.0.0-alpha.10":
   version "4.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@account-kit/core/-/core-4.0.0-alpha.10.tgz#d584167eb8b06a620fb7b6746c41aadf49a96497"
   integrity sha512-svQiUSAjr1Xl1vckQ8YvX3ISoJWJnuv3PTkrHwW9oWRJcEPavLGRDlJx3FhMgf8lXZFTS6JPyYaKw+eiwuL4Wg==
@@ -28,7 +28,7 @@
   optionalDependencies:
     alchemy-sdk "^3.0.0"
 
-"@account-kit/infra@^4.0.0-alpha.10":
+"@account-kit/infra@4.0.0-alpha.10", "@account-kit/infra@^4.0.0-alpha.10":
   version "4.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@account-kit/infra/-/infra-4.0.0-alpha.10.tgz#44614885538e3b63292411f44812c9286dba85b8"
   integrity sha512-Xitx801MaXDFJzwa1dBdB9do411PJITJ661LB/p9LylWLJVb/VUWesASeolpeNke8n+A8LfXMgRG/61wXr6Glw==
@@ -40,7 +40,7 @@
   optionalDependencies:
     alchemy-sdk "^3.0.0"
 
-"@account-kit/react@^4.0.0-alpha.10":
+"@account-kit/react@4.0.0-alpha.10":
   version "4.0.0-alpha.10"
   resolved "https://registry.yarnpkg.com/@account-kit/react/-/react-4.0.0-alpha.10.tgz#3a961283370cb36ef3217d3658712c641c53d3f1"
   integrity sha512-ijAYBwM3BTSAx/Cd3bOlI/4Uo+OafiSfkunykz6OFdo+lg0FRMofjoIDZ1rJ12xcDUGEnd9IK06deq4x5ZqRHQ==

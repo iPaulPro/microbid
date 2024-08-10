@@ -1,4 +1,4 @@
-import { config } from "@/config";
+import { alchemyConfig } from "@/config";
 import { cookieToInitialState } from "@account-kit/core";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   // This will allow us to persist state across page boundaries (read more here: https://accountkit.alchemy.com/react/ssr#persisting-the-account-state)
   const initialState = cookieToInitialState(
-    config,
+    alchemyConfig,
     headers().get("cookie") ?? undefined
   );
 

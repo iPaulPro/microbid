@@ -1,0 +1,443 @@
+{
+  "address": "0xeb9A5A10469c36F575DF9225f1E7c0B9EBC986c2",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IWorldID",
+          "name": "_worldId",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_appId",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_actionId",
+          "type": "string"
+        },
+        {
+          "internalType": "contract IAttester",
+          "name": "_attester",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "AttesterNotSet",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidNullifier",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableInvalidOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "OwnableUnauthorizedAccount",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "ReentrancyGuardReentrantCall",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "attester",
+          "type": "address"
+        }
+      ],
+      "name": "AttesterUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "ContractDeployed",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "VerificationSuccessful",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "attester",
+      "outputs": [
+        {
+          "internalType": "contract IAttester",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_nullifierHash",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNullifierHash",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IAttester",
+          "name": "_attester",
+          "type": "address"
+        }
+      ],
+      "name": "setAttester",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_signal",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_root",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_nullifierHash",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[8]",
+          "name": "_proof",
+          "type": "uint256[8]"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xb6aa8f20eda630d5da23345c5ae4cd75e2ed2bd4d2499ff930ca97f9b7ecafa2",
+  "receipt": {
+    "to": null,
+    "from": "0xA82C8f5A03AeB2221abEdB51d9E462aFd9f63CD4",
+    "contractAddress": "0xeb9A5A10469c36F575DF9225f1E7c0B9EBC986c2",
+    "transactionIndex": 9,
+    "gasUsed": "520228",
+    "logsBloom": "0x00000000080000000000000000000000000000000000000000800000000000000000000000000800000008000000000000000000000000000000000000000000000000000000000000000000000000000001000001000000000000000000000000000000020000000000000000000800000000020000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000020010000000010000000000000000000000040000000000000000000000000000000",
+    "blockHash": "0x653c8b0e017ca59874d48c5733405a3bf61b62700b979e31bd841dbfdc8b7fcb",
+    "transactionHash": "0xb6aa8f20eda630d5da23345c5ae4cd75e2ed2bd4d2499ff930ca97f9b7ecafa2",
+    "logs": [
+      {
+        "transactionIndex": 9,
+        "blockNumber": 13733875,
+        "transactionHash": "0xb6aa8f20eda630d5da23345c5ae4cd75e2ed2bd4d2499ff930ca97f9b7ecafa2",
+        "address": "0xeb9A5A10469c36F575DF9225f1E7c0B9EBC986c2",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000a82c8f5a03aeb2221abedb51d9e462afd9f63cd4"
+        ],
+        "data": "0x",
+        "logIndex": 92,
+        "blockHash": "0x653c8b0e017ca59874d48c5733405a3bf61b62700b979e31bd841dbfdc8b7fcb"
+      },
+      {
+        "transactionIndex": 9,
+        "blockNumber": 13733875,
+        "transactionHash": "0xb6aa8f20eda630d5da23345c5ae4cd75e2ed2bd4d2499ff930ca97f9b7ecafa2",
+        "address": "0xeb9A5A10469c36F575DF9225f1E7c0B9EBC986c2",
+        "topics": [
+          "0xdaf2a119a79dac8445fdc10627116c03f4b0ffb5cf1aee5223ac18a7453e631f"
+        ],
+        "data": "0x",
+        "logIndex": 93,
+        "blockHash": "0x653c8b0e017ca59874d48c5733405a3bf61b62700b979e31bd841dbfdc8b7fcb"
+      }
+    ],
+    "blockNumber": 13733875,
+    "cumulativeGasUsed": "4494648",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xA82C8f5A03AeB2221abEdB51d9E462aFd9f63CD4",
+    "0x42FF98C4E85212a5D31358ACbFe76a621b50fC02",
+    "app_staging_8ca552a220222cb821d8f3906039beaa",
+    "proof-of-personhood",
+    "0x57bCA94DD71A03Fb2A10Bb6aC64e151AA102ff62"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "669247ac9aa6cb05f3e780c27bdfd281",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.24+commit.e11b9ed9\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"contract IWorldID\",\"name\":\"_worldId\",\"type\":\"address\"},{\"internalType\":\"string\",\"name\":\"_appId\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"_actionId\",\"type\":\"string\"},{\"internalType\":\"contract IAttester\",\"name\":\"_attester\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AttesterNotSet\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidNullifier\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"OwnableInvalidOwner\",\"type\":\"error\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"OwnableUnauthorizedAccount\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"ReentrancyGuardReentrantCall\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"attester\",\"type\":\"address\"}],\"name\":\"AttesterUpdated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"ContractDeployed\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"previousOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"VerificationSuccessful\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"attester\",\"outputs\":[{\"internalType\":\"contract IAttester\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_nullifierHash\",\"type\":\"uint256\"}],\"name\":\"getNullifierHash\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IAttester\",\"name\":\"_attester\",\"type\":\"address\"}],\"name\":\"setAttester\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_signal\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_root\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_nullifierHash\",\"type\":\"uint256\"},{\"internalType\":\"uint256[8]\",\"name\":\"_proof\",\"type\":\"uint256[8]\"}],\"name\":\"verify\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"OwnableInvalidOwner(address)\":[{\"details\":\"The owner is not a valid owner account. (eg. `address(0)`)\"}],\"OwnableUnauthorizedAccount(address)\":[{\"details\":\"The caller account is not authorized to perform an operation.\"}],\"ReentrancyGuardReentrantCall()\":[{\"details\":\"Unauthorized reentrant call.\"}]},\"events\":{\"AttesterUpdated(address)\":{\"details\":\"Emitted when the attester for the contract is set or updated.\",\"params\":{\"attester\":\"The address of the attester.\"}},\"VerificationSuccessful(address)\":{\"details\":\"Emitted when a user successfully verifies their proof.\",\"params\":{\"user\":\"The address of the user who submitted the proof.\"}}},\"kind\":\"dev\",\"methods\":{\"constructor\":{\"params\":{\"_actionId\":\"The World ID action ID\",\"_appId\":\"The World ID app ID\",\"_worldId\":\"The WorldID instance that will verify the proofs\"}},\"owner()\":{\"details\":\"Returns the address of the current owner.\"},\"renounceOwnership()\":{\"details\":\"Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner.\"},\"transferOwnership(address)\":{\"details\":\"Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner.\"},\"verify(address,uint256,uint256,uint256[8])\":{\"params\":{\"_nullifierHash\":\"The nullifier hash for this proof, preventing double signaling.\",\"_proof\":\"The zero-knowledge proof that demonstrates the claimer is registered with World ID.\",\"_root\":\"The root of the Merkle tree.\",\"_signal\":\"The address of the submitter.\"}}},\"stateVariables\":{\"externalNullifier\":{\"details\":\"The contract's external nullifier hash\"},\"groupId\":{\"details\":\"The World ID group ID\"},\"nullifierHashes\":{\"details\":\"Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person\"},\"worldId\":{\"details\":\"The World ID instance that will be used for verifying proofs\"}},\"version\":1},\"userdoc\":{\"errors\":{\"InvalidNullifier()\":[{\"notice\":\"Thrown when attempting to reuse a nullifier\"}]},\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/MicroBidPoPVerifier.sol\":\"MicroBidPoPVerifier\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts/access/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (access/Ownable.sol)\\n\\npragma solidity ^0.8.20;\\n\\nimport {Context} from \\\"../utils/Context.sol\\\";\\n\\n/**\\n * @dev Contract module which provides a basic access control mechanism, where\\n * there is an account (an owner) that can be granted exclusive access to\\n * specific functions.\\n *\\n * The initial owner is set to the address provided by the deployer. This can\\n * later be changed with {transferOwnership}.\\n *\\n * This module is used through inheritance. It will make available the modifier\\n * `onlyOwner`, which can be applied to your functions to restrict their use to\\n * the owner.\\n */\\nabstract contract Ownable is Context {\\n    address private _owner;\\n\\n    /**\\n     * @dev The caller account is not authorized to perform an operation.\\n     */\\n    error OwnableUnauthorizedAccount(address account);\\n\\n    /**\\n     * @dev The owner is not a valid owner account. (eg. `address(0)`)\\n     */\\n    error OwnableInvalidOwner(address owner);\\n\\n    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);\\n\\n    /**\\n     * @dev Initializes the contract setting the address provided by the deployer as the initial owner.\\n     */\\n    constructor(address initialOwner) {\\n        if (initialOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(initialOwner);\\n    }\\n\\n    /**\\n     * @dev Throws if called by any account other than the owner.\\n     */\\n    modifier onlyOwner() {\\n        _checkOwner();\\n        _;\\n    }\\n\\n    /**\\n     * @dev Returns the address of the current owner.\\n     */\\n    function owner() public view virtual returns (address) {\\n        return _owner;\\n    }\\n\\n    /**\\n     * @dev Throws if the sender is not the owner.\\n     */\\n    function _checkOwner() internal view virtual {\\n        if (owner() != _msgSender()) {\\n            revert OwnableUnauthorizedAccount(_msgSender());\\n        }\\n    }\\n\\n    /**\\n     * @dev Leaves the contract without owner. It will not be possible to call\\n     * `onlyOwner` functions. Can only be called by the current owner.\\n     *\\n     * NOTE: Renouncing ownership will leave the contract without an owner,\\n     * thereby disabling any functionality that is only available to the owner.\\n     */\\n    function renounceOwnership() public virtual onlyOwner {\\n        _transferOwnership(address(0));\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Can only be called by the current owner.\\n     */\\n    function transferOwnership(address newOwner) public virtual onlyOwner {\\n        if (newOwner == address(0)) {\\n            revert OwnableInvalidOwner(address(0));\\n        }\\n        _transferOwnership(newOwner);\\n    }\\n\\n    /**\\n     * @dev Transfers ownership of the contract to a new account (`newOwner`).\\n     * Internal function without access restriction.\\n     */\\n    function _transferOwnership(address newOwner) internal virtual {\\n        address oldOwner = _owner;\\n        _owner = newOwner;\\n        emit OwnershipTransferred(oldOwner, newOwner);\\n    }\\n}\\n\",\"keccak256\":\"0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.1) (utils/Context.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n\\n    function _contextSuffixLength() internal view virtual returns (uint256) {\\n        return 0;\\n    }\\n}\\n\",\"keccak256\":\"0x493033a8d1b176a037b2cc6a04dad01a5c157722049bbecf632ca876224dd4b2\",\"license\":\"MIT\"},\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v5.0.0) (utils/ReentrancyGuard.sol)\\n\\npragma solidity ^0.8.20;\\n\\n/**\\n * @dev Contract module that helps prevent reentrant calls to a function.\\n *\\n * Inheriting from `ReentrancyGuard` will make the {nonReentrant} modifier\\n * available, which can be applied to functions to make sure there are no nested\\n * (reentrant) calls to them.\\n *\\n * Note that because there is a single `nonReentrant` guard, functions marked as\\n * `nonReentrant` may not call one another. This can be worked around by making\\n * those functions `private`, and then adding `external` `nonReentrant` entry\\n * points to them.\\n *\\n * TIP: If you would like to learn more about reentrancy and alternative ways\\n * to protect against it, check out our blog post\\n * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].\\n */\\nabstract contract ReentrancyGuard {\\n    // Booleans are more expensive than uint256 or any type that takes up a full\\n    // word because each write operation emits an extra SLOAD to first read the\\n    // slot's contents, replace the bits taken up by the boolean, and then write\\n    // back. This is the compiler's defense against contract upgrades and\\n    // pointer aliasing, and it cannot be disabled.\\n\\n    // The values being non-zero value makes deployment a bit more expensive,\\n    // but in exchange the refund on every call to nonReentrant will be lower in\\n    // amount. Since refunds are capped to a percentage of the total\\n    // transaction's gas, it is best to keep them low in cases like this one, to\\n    // increase the likelihood of the full refund coming into effect.\\n    uint256 private constant NOT_ENTERED = 1;\\n    uint256 private constant ENTERED = 2;\\n\\n    uint256 private _status;\\n\\n    /**\\n     * @dev Unauthorized reentrant call.\\n     */\\n    error ReentrancyGuardReentrantCall();\\n\\n    constructor() {\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Prevents a contract from calling itself, directly or indirectly.\\n     * Calling a `nonReentrant` function from another `nonReentrant`\\n     * function is not supported. It is possible to prevent this from happening\\n     * by making the `nonReentrant` function external, and making it call a\\n     * `private` function that does the actual work.\\n     */\\n    modifier nonReentrant() {\\n        _nonReentrantBefore();\\n        _;\\n        _nonReentrantAfter();\\n    }\\n\\n    function _nonReentrantBefore() private {\\n        // On the first call to nonReentrant, _status will be NOT_ENTERED\\n        if (_status == ENTERED) {\\n            revert ReentrancyGuardReentrantCall();\\n        }\\n\\n        // Any calls to nonReentrant after this point will fail\\n        _status = ENTERED;\\n    }\\n\\n    function _nonReentrantAfter() private {\\n        // By storing the original value once again, a refund is triggered (see\\n        // https://eips.ethereum.org/EIPS/eip-2200)\\n        _status = NOT_ENTERED;\\n    }\\n\\n    /**\\n     * @dev Returns true if the reentrancy guard is currently set to \\\"entered\\\", which indicates there is a\\n     * `nonReentrant` function in the call stack.\\n     */\\n    function _reentrancyGuardEntered() internal view returns (bool) {\\n        return _status == ENTERED;\\n    }\\n}\\n\",\"keccak256\":\"0xf980daa263b661ab8ddee7d4fd833c7da7e7995e2c359ff1f17e67e4112f2236\",\"license\":\"MIT\"},\"contracts/MicroBidPoPVerifier.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity 0.8.24;\\n\\nimport { ReentrancyGuard } from \\\"@openzeppelin/contracts/utils/ReentrancyGuard.sol\\\";\\nimport { Ownable } from \\\"@openzeppelin/contracts/access/Ownable.sol\\\";\\n\\nimport { IWorldID } from \\\"./interfaces/IWorldID.sol\\\";\\nimport { IAttester } from \\\"./interfaces/IAttester.sol\\\";\\nimport { Types } from \\\"./constants/Types.sol\\\";\\nimport { ByteHasher } from \\\"./utils/ByteHasher.sol\\\";\\n\\ncontract MicroBidPoPVerifier is Ownable, ReentrancyGuard {\\n\\tusing ByteHasher for bytes;\\n\\n\\t/// @notice Thrown when attempting to reuse a nullifier\\n\\terror InvalidNullifier();\\n\\terror AttesterNotSet();\\n\\n\\tevent ContractDeployed();\\n\\n\\t/// @dev Emitted when a user successfully verifies their proof.\\n\\t/// @param user The address of the user who submitted the proof.\\n\\tevent VerificationSuccessful(address indexed user);\\n\\n\\t/// @dev Emitted when the attester for the contract is set or updated.\\n\\t/// @param attester The address of the attester.\\n\\tevent AttesterUpdated(address indexed attester);\\n\\n\\t/// @dev The World ID instance that will be used for verifying proofs\\n\\tIWorldID internal immutable worldId;\\n\\n\\t/// @dev The contract's external nullifier hash\\n\\tuint256 internal immutable externalNullifier;\\n\\n\\t/// @dev The World ID group ID\\n\\tuint8 internal immutable groupId = 1;\\n\\n\\t/// @dev Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person\\n\\tmapping(uint256 => bool) internal nullifierHashes;\\n\\n\\tIAttester public attester;\\n\\n\\t/// @param _worldId The WorldID instance that will verify the proofs\\n\\t/// @param _appId The World ID app ID\\n\\t/// @param _actionId The World ID action ID\\n\\tconstructor(\\n\\t\\taddress _owner,\\n\\t\\tIWorldID _worldId,\\n\\t\\tstring memory _appId,\\n\\t\\tstring memory _actionId,\\n\\t\\tIAttester _attester\\n\\t) Ownable(_owner) {\\n\\t\\tworldId = _worldId;\\n\\t\\tattester = _attester;\\n\\t\\texternalNullifier = abi\\n\\t\\t\\t.encodePacked(abi.encodePacked(_appId).hashToField(), _actionId)\\n\\t\\t\\t.hashToField();\\n\\n\\t\\t// Initialize first slot to prevent replay attack\\n\\t\\tnullifierHashes[0] = true;\\n\\n\\t\\temit ContractDeployed();\\n\\t}\\n\\n\\tfunction setAttester(IAttester _attester) external onlyOwner {\\n\\t\\tattester = _attester;\\n\\t\\temit AttesterUpdated(address(attester));\\n\\t}\\n\\n\\t/// @param _signal The address of the submitter.\\n\\t/// @param _root The root of the Merkle tree.\\n\\t/// @param _nullifierHash The nullifier hash for this proof, preventing double signaling.\\n\\t/// @param _proof The zero-knowledge proof that demonstrates the claimer is registered with World ID.\\n\\tfunction verify(\\n\\t\\taddress _signal,\\n\\t\\tuint256 _root,\\n\\t\\tuint256 _nullifierHash,\\n\\t\\tuint256[8] calldata _proof\\n\\t) external nonReentrant returns (bytes32) {\\n\\t\\tif (address(attester) == address(0)) revert AttesterNotSet();\\n\\n\\t\\t// First, we make sure this person hasn't done this before\\n\\t\\tif (nullifierHashes[_nullifierHash]) revert InvalidNullifier();\\n\\n\\t\\t// We now verify the provided proof is valid and the user is verified by World ID\\n\\t\\tworldId.verifyProof(\\n\\t\\t\\t_root,\\n\\t\\t\\tgroupId,\\n\\t\\t\\tabi.encodePacked(_signal).hashToField(),\\n\\t\\t\\t_nullifierHash,\\n\\t\\t\\texternalNullifier,\\n\\t\\t\\t_proof\\n\\t\\t);\\n\\n\\t\\t// We now record the user has done this, so they can't do it again (proof of uniqueness)\\n\\t\\tnullifierHashes[_nullifierHash] = true;\\n\\n\\t\\temit VerificationSuccessful(_signal);\\n\\n\\t\\tTypes.PoPSchema memory data = Types.PoPSchema({\\n\\t\\t\\tnullifierHash: _nullifierHash\\n\\t\\t});\\n\\n\\t\\tbytes32 uid = attester.createAttestation(_signal, data);\\n\\t\\treturn uid;\\n\\t}\\n\\n\\tfunction getNullifierHash(\\n\\t\\tuint256 _nullifierHash\\n\\t) external view returns (bool) {\\n\\t\\treturn nullifierHashes[_nullifierHash];\\n\\t}\\n}\\n\",\"keccak256\":\"0xc8cd4487b96a43d65caa31e1daecf9c06e8dc50943e167b6d77c4387b767b13c\",\"license\":\"MIT\"},\"contracts/constants/Types.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\nlibrary Types {\\n\\t/**\\n\\t * @notice A struct containing information about an auction item\\n\\t * @param itemId The ID of the auction item\\n\\t * @param isActive Whether the auction is active\\n\\t * @param endBlock The block at which the auction ends\\n\\t * @param totalBids The total number of bids on the auction\\n\\t * @param latestBidder The address of the latest bidder\\n\\t * @param metadataURI The URI of the metadata for the item\\n\\t * @param claimed Whether the item has been claimed\\n\\t */\\n\\tstruct AuctionItem {\\n\\t\\tuint256 itemId;\\n\\t\\tbool isActive;\\n\\t\\tuint256 endBlock;\\n\\t\\tuint256 totalBids;\\n\\t\\taddress latestBidder;\\n\\t\\tstring metadataURI;\\n\\t\\tbool claimed;\\n\\t}\\n\\n\\t/**\\n\\t * @notice A struct containing information about a Proof of Personhood schema\\n\\t * @param nullifierHash The hash of the nullifier\\n\\t */\\n\\tstruct PoPSchema {\\n\\t\\tuint256 nullifierHash;\\n\\t}\\n}\\n\",\"keccak256\":\"0xed5e0c1e6417f787f82a59628738bb14f1cbd5d0c5ee04015d59f23d432763a0\",\"license\":\"MIT\"},\"contracts/interfaces/IAttester.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\nimport { Types } from \\\"../constants/Types.sol\\\";\\n\\ninterface IAttester {\\n\\tfunction isVerified(address _address) external view returns (bool);\\n\\tfunction createAttestation(\\n\\t\\taddress recipient,\\n\\t\\tTypes.PoPSchema memory data\\n\\t) external returns (bytes32);\\n}\\n\",\"keccak256\":\"0x9bc368d3efdd3fd6f2965dfa307a38763e2e951d2ac5e9b2ca5fa7ec2c7f9ee6\",\"license\":\"MIT\"},\"contracts/interfaces/IWorldID.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\npragma solidity ^0.8.24;\\n\\ninterface IWorldID {\\n\\t/// @notice Reverts if the zero-knowledge proof is invalid.\\n\\t/// @param root The of the Merkle tree\\n\\t/// @param groupId The id of the Semaphore group\\n\\t/// @param signalHash A keccak256 hash of the Semaphore signal\\n\\t/// @param nullifierHash The nullifier hash\\n\\t/// @param externalNullifierHash A keccak256 hash of the external nullifier\\n\\t/// @param proof The zero-knowledge proof\\n\\t/// @dev  Note that a double-signaling check is not included here, and should be carried by the caller.\\n\\tfunction verifyProof(\\n\\t\\tuint256 root,\\n\\t\\tuint256 groupId,\\n\\t\\tuint256 signalHash,\\n\\t\\tuint256 nullifierHash,\\n\\t\\tuint256 externalNullifierHash,\\n\\t\\tuint256[8] calldata proof\\n\\t) external view;\\n}\\n\",\"keccak256\":\"0xa67e9fb0aebc63a8517847a680e585716be4c010083f1ab9f2270e11c4f31438\",\"license\":\"MIT\"},\"contracts/utils/ByteHasher.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.10;\\n\\nlibrary ByteHasher {\\n    /// @dev Creates a keccak256 hash of a bytestring.\\n    /// @param value The bytestring to hash\\n    /// @return The hash of the specified value\\n    /// @dev `>> 8` makes sure that the result is included in our field\\n    function hashToField(bytes memory value) internal pure returns (uint256) {\\n        return uint256(keccak256(abi.encodePacked(value))) >> 8;\\n    }\\n}\\n\",\"keccak256\":\"0x225f0627ac21d07df35533f605936035d74aa0f05a632cb8d150d3af50408cd0\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60e0604052600160c0523480156200001657600080fd5b5060405162000a5338038062000a538339810160408190526200003991620002bd565b846001600160a01b0381166200006957604051631e4fbdf760e01b81526000600482015260240160405180910390fd5b620000748162000150565b50600180556001600160a01b03848116608052600380546001600160a01b031916918316919091179055604051620000e590620000d190620000bb90869060200162000369565b60408051601f19818403018152919052620001a0565b83604051602001620000bb92919062000387565b60a052600080805260026020527fac33ff75c19e70fe83507db0d683fd3465c996598dc972688b7ace676c89077b805460ff191660011790556040517fdaf2a119a79dac8445fdc10627116c03f4b0ffb5cf1aee5223ac18a7453e631f9190a15050505050620003af565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6000600882604051602001620001b7919062000369565b60408051601f198184030181529190528051602090910120901c92915050565b6001600160a01b0381168114620001ed57600080fd5b50565b634e487b7160e01b600052604160045260246000fd5b60005b838110156200022357818101518382015260200162000209565b50506000910152565b600082601f8301126200023e57600080fd5b81516001600160401b03808211156200025b576200025b620001f0565b604051601f8301601f19908116603f01168101908282118183101715620002865762000286620001f0565b81604052838152866020858801011115620002a057600080fd5b620002b384602083016020890162000206565b9695505050505050565b600080600080600060a08688031215620002d657600080fd5b8551620002e381620001d7565b6020870151909550620002f681620001d7565b60408701519094506001600160401b03808211156200031457600080fd5b6200032289838a016200022c565b945060608801519150808211156200033957600080fd5b5062000348888289016200022c565b92505060808601516200035b81620001d7565b809150509295509295909350565b600082516200037d81846020870162000206565b9190910192915050565b82815260008251620003a181602085016020870162000206565b919091016020019392505050565b60805160a05160c051610674620003df60003960006101dc0152600061023e015260006101ac01526106746000f3fe608060405234801561001057600080fd5b506004361061007d5760003560e01c806385b91c951161005b57806385b91c95146100dd5780638da5cb5b146101105780639daf85ab14610121578063f2fde38b1461013457600080fd5b80631e6ab5331461008257806347b0c3b3146100a8578063715018a6146100d3575b600080fd5b61009561009036600461052e565b610147565b6040519081526020015b60405180910390f35b6003546100bb906001600160a01b031681565b6040516001600160a01b03909116815260200161009f565b6100db610394565b005b6101006100eb36600461057e565b60009081526002602052604090205460ff1690565b604051901515815260200161009f565b6000546001600160a01b03166100bb565b6100db61012f366004610597565b6103a8565b6100db610142366004610597565b6103fa565b600061015161043d565b6003546001600160a01b031661017a5760405163265e441160e21b815260040160405180910390fd5b60008381526002602052604090205460ff16156101aa57604051632ec8265960e11b815260040160405180910390fd5b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316633bc778e3857f000000000000000000000000000000000000000000000000000000000000000061023b89604051602001610227919060609190911b6bffffffffffffffffffffffff1916815260140190565b604051602081830303815290604052610467565b877f0000000000000000000000000000000000000000000000000000000000000000886040518763ffffffff1660e01b815260040161027f969594939291906105bb565b60006040518083038186803b15801561029757600080fd5b505afa1580156102ab573d6000803e3d6000fd5b505050600084815260026020526040808220805460ff19166001179055516001600160a01b03881692507fdcae470f5d7900ad0f27f39e8454d4ee863e57e7a9693c91ceb401700726aeb39190a26040805160208101825284815260035491516318ba971d60e11b81526001600160a01b03888116600483015282516024830152919260009216906331752e3a906044016020604051808303816000875af115801561035b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061037f91906105f6565b9250505061038c60018055565b949350505050565b61039c61049c565b6103a660006104c9565b565b6103b061049c565b600380546001600160a01b0319166001600160a01b0383169081179091556040517f2d685970da1fe08d9d7ace6f5a982ede39c817eb28d1ac4935c913c4866248ca90600090a250565b61040261049c565b6001600160a01b03811661043157604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b61043a816104c9565b50565b60026001540361046057604051633ee5aeb560e01b815260040160405180910390fd5b6002600155565b600060088260405160200161047c919061060f565b60408051601f198184030181529190528051602090910120901c92915050565b6000546001600160a01b031633146103a65760405163118cdaa760e01b8152336004820152602401610428565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6001600160a01b038116811461043a57600080fd5b60008060008061016080868803121561054657600080fd5b853561055181610519565b9450602086013593506040860135925080860187101561057057600080fd5b509295919450926060019150565b60006020828403121561059057600080fd5b5035919050565b6000602082840312156105a957600080fd5b81356105b481610519565b9392505050565b60006101a08201905087825260ff871660208301528560408301528460608301528360808301526101008360a0840137979650505050505050565b60006020828403121561060857600080fd5b5051919050565b6000825160005b818110156106305760208186018101518583015201610616565b50600092019182525091905056fea264697066735822122036950be19ab063a4514befb4bd91bfb0ab0f43e89fdc8fcb4eda7a69621c39a364736f6c63430008180033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061007d5760003560e01c806385b91c951161005b57806385b91c95146100dd5780638da5cb5b146101105780639daf85ab14610121578063f2fde38b1461013457600080fd5b80631e6ab5331461008257806347b0c3b3146100a8578063715018a6146100d3575b600080fd5b61009561009036600461052e565b610147565b6040519081526020015b60405180910390f35b6003546100bb906001600160a01b031681565b6040516001600160a01b03909116815260200161009f565b6100db610394565b005b6101006100eb36600461057e565b60009081526002602052604090205460ff1690565b604051901515815260200161009f565b6000546001600160a01b03166100bb565b6100db61012f366004610597565b6103a8565b6100db610142366004610597565b6103fa565b600061015161043d565b6003546001600160a01b031661017a5760405163265e441160e21b815260040160405180910390fd5b60008381526002602052604090205460ff16156101aa57604051632ec8265960e11b815260040160405180910390fd5b7f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316633bc778e3857f000000000000000000000000000000000000000000000000000000000000000061023b89604051602001610227919060609190911b6bffffffffffffffffffffffff1916815260140190565b604051602081830303815290604052610467565b877f0000000000000000000000000000000000000000000000000000000000000000886040518763ffffffff1660e01b815260040161027f969594939291906105bb565b60006040518083038186803b15801561029757600080fd5b505afa1580156102ab573d6000803e3d6000fd5b505050600084815260026020526040808220805460ff19166001179055516001600160a01b03881692507fdcae470f5d7900ad0f27f39e8454d4ee863e57e7a9693c91ceb401700726aeb39190a26040805160208101825284815260035491516318ba971d60e11b81526001600160a01b03888116600483015282516024830152919260009216906331752e3a906044016020604051808303816000875af115801561035b573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061037f91906105f6565b9250505061038c60018055565b949350505050565b61039c61049c565b6103a660006104c9565b565b6103b061049c565b600380546001600160a01b0319166001600160a01b0383169081179091556040517f2d685970da1fe08d9d7ace6f5a982ede39c817eb28d1ac4935c913c4866248ca90600090a250565b61040261049c565b6001600160a01b03811661043157604051631e4fbdf760e01b8152600060048201526024015b60405180910390fd5b61043a816104c9565b50565b60026001540361046057604051633ee5aeb560e01b815260040160405180910390fd5b6002600155565b600060088260405160200161047c919061060f565b60408051601f198184030181529190528051602090910120901c92915050565b6000546001600160a01b031633146103a65760405163118cdaa760e01b8152336004820152602401610428565b600080546001600160a01b038381166001600160a01b0319831681178455604051919092169283917f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e09190a35050565b6001600160a01b038116811461043a57600080fd5b60008060008061016080868803121561054657600080fd5b853561055181610519565b9450602086013593506040860135925080860187101561057057600080fd5b509295919450926060019150565b60006020828403121561059057600080fd5b5035919050565b6000602082840312156105a957600080fd5b81356105b481610519565b9392505050565b60006101a08201905087825260ff871660208301528560408301528460608301528360808301526101008360a0840137979650505050505050565b60006020828403121561060857600080fd5b5051919050565b6000825160005b818110156106305760208186018101518583015201610616565b50600092019182525091905056fea264697066735822122036950be19ab063a4514befb4bd91bfb0ab0f43e89fdc8fcb4eda7a69621c39a364736f6c63430008180033",
+  "devdoc": {
+    "errors": {
+      "OwnableInvalidOwner(address)": [
+        {
+          "details": "The owner is not a valid owner account. (eg. `address(0)`)"
+        }
+      ],
+      "OwnableUnauthorizedAccount(address)": [
+        {
+          "details": "The caller account is not authorized to perform an operation."
+        }
+      ],
+      "ReentrancyGuardReentrantCall()": [
+        {
+          "details": "Unauthorized reentrant call."
+        }
+      ]
+    },
+    "events": {
+      "AttesterUpdated(address)": {
+        "details": "Emitted when the attester for the contract is set or updated.",
+        "params": {
+          "attester": "The address of the attester."
+        }
+      },
+      "VerificationSuccessful(address)": {
+        "details": "Emitted when a user successfully verifies their proof.",
+        "params": {
+          "user": "The address of the user who submitted the proof."
+        }
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "constructor": {
+        "params": {
+          "_actionId": "The World ID action ID",
+          "_appId": "The World ID app ID",
+          "_worldId": "The WorldID instance that will verify the proofs"
+        }
+      },
+      "owner()": {
+        "details": "Returns the address of the current owner."
+      },
+      "renounceOwnership()": {
+        "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+      },
+      "transferOwnership(address)": {
+        "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+      },
+      "verify(address,uint256,uint256,uint256[8])": {
+        "params": {
+          "_nullifierHash": "The nullifier hash for this proof, preventing double signaling.",
+          "_proof": "The zero-knowledge proof that demonstrates the claimer is registered with World ID.",
+          "_root": "The root of the Merkle tree.",
+          "_signal": "The address of the submitter."
+        }
+      }
+    },
+    "stateVariables": {
+      "externalNullifier": {
+        "details": "The contract's external nullifier hash"
+      },
+      "groupId": {
+        "details": "The World ID group ID"
+      },
+      "nullifierHashes": {
+        "details": "Whether a nullifier hash has been used already. Used to guarantee an action is only performed once by a single person"
+      },
+      "worldId": {
+        "details": "The World ID instance that will be used for verifying proofs"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "errors": {
+      "InvalidNullifier()": [
+        {
+          "notice": "Thrown when attempting to reuse a nullifier"
+        }
+      ]
+    },
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 883,
+        "contract": "contracts/MicroBidPoPVerifier.sol:MicroBidPoPVerifier",
+        "label": "_owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 2645,
+        "contract": "contracts/MicroBidPoPVerifier.sol:MicroBidPoPVerifier",
+        "label": "_status",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 6081,
+        "contract": "contracts/MicroBidPoPVerifier.sol:MicroBidPoPVerifier",
+        "label": "nullifierHashes",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_bool)"
+      },
+      {
+        "astId": 6084,
+        "contract": "contracts/MicroBidPoPVerifier.sol:MicroBidPoPVerifier",
+        "label": "attester",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_contract(IAttester)6701"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IAttester)6701": {
+        "encoding": "inplace",
+        "label": "contract IAttester",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

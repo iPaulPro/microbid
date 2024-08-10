@@ -2,20 +2,20 @@ import {
   AlchemyAccountsUIConfig,
   cookieStorage,
   createConfig,
-} from "@account-kit/react"
-import { baseSepolia } from "@account-kit/infra"
-import { QueryClient } from "@tanstack/react-query"
+} from "@account-kit/react";
+import { baseSepolia } from "@account-kit/infra";
+import { QueryClient } from "@tanstack/react-query";
 
 const uiConfig: AlchemyAccountsUIConfig = {
   auth: {
     sections: [[{ type: "email" as const }]],
     addPasskeyOnSignup: false,
     header: "Sign in with email",
-    hideSignInText: true
+    hideSignInText: true,
   },
-}
+};
 
-export const config = createConfig(
+export const alchemyConfig = createConfig(
   {
     apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY!,
     policyId: process.env.NEXT_PUBLIC_ALCHEMY_GAS_POLICY!,
@@ -23,7 +23,7 @@ export const config = createConfig(
     ssr: true,
     storage: cookieStorage,
   },
-  uiConfig
-)
+  uiConfig,
+);
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient();
