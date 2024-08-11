@@ -241,7 +241,9 @@ export default function Page({ params }: { params: { id: bigint } }) {
           </div>
           <div className="grid gap-2">
             <div className="flex items-center justify-between">
-              <span className="text-lg font-medium">Current price:</span>
+              <span className="text-lg font-medium">
+                {auctionEnded ? "Final" : "Current"} price:
+              </span>
               <span className="text-4xl font-bold text-primary">
                 ${(Number(item.totalBids) / 100).toFixed(2)}
               </span>

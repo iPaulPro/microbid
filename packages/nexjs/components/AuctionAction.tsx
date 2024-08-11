@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 
-interface ActionActionProps {
+interface AuctionActionProps {
   item: AuctionItem;
   userAddress: `0x${string}` | undefined;
   auctionEnded: boolean;
@@ -9,7 +9,7 @@ interface ActionActionProps {
   placeBid: () => void;
 }
 
-const ActionAction: React.FC<ActionActionProps> = ({
+const AuctionAction: React.FC<AuctionActionProps> = ({
   item,
   userAddress,
   auctionEnded,
@@ -45,4 +45,4 @@ const ActionAction: React.FC<ActionActionProps> = ({
   );
 };
 
-export default ActionAction;
+export default AuctionAction;
