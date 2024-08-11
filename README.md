@@ -16,13 +16,13 @@ This project uses multiple smart contracts deployed to Base L2. World ID is used
 
 Microbid is currently deployed on Base L2 tesnet, Base Sepolia. The contracts are as follows:
 
-| Contract         | Purpose                                                 | Address                                                                                                                       |
-|------------------|---------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-| MicroBidToken    | The token used to place bets on auctions.               | [0x077afD867F1F6144677F39416797D64d743db31D](https://sepolia.basescan.org/address/0x6c11ebe9cdeea9c0c41c51e144a9c47e1ecf66da) |
-| MicroBidVerifier | Verifies Proof of Personhood using World ID.            | [0xA1b5884235Fe70a512bAbbf94BAaa39aC10CCC1f](https://sepolia.basescan.org/address/0xA1b5884235Fe70a512bAbbf94BAaa39aC10CCC1f) |
-| MicroBidAttester | Creates and validates Proof of Personhood attestations. | [0xF425aA733164f7f0243A394aa58aa03E4229ABFb](https://sepolia.basescan.org/address/0xF425aA733164f7f0243A394aa58aa03E4229ABFb) |
-| MicroBidTreasury | Manages minting and burning of bid tokens.              | [0x161b278191a3e00660645fb3dFa7066c900092Ed](https://sepolia.basescan.org/address/0x161b278191a3e00660645fb3dFa7066c900092Ed) |
-| MicroBidAuction  | The main contract that controls auctions.               | [0x6C11EBE9CDEEA9c0C41c51e144a9C47e1eCF66Da](https://sepolia.basescan.org/address/0x6C11EBE9CDEEA9c0C41c51e144a9C47e1eCF66Da) |
+| Contract         | Purpose                                                           | Address                                                                                                                       |
+|------------------|-------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| MicroBidToken    | The token used to place bets on auctions.                         | [0x077afD867F1F6144677F39416797D64d743db31D](https://sepolia.basescan.org/address/0x6c11ebe9cdeea9c0c41c51e144a9c47e1ecf66da) |
+| MicroBidVerifier | Verifies Proof of Personhood using World ID.                      | [0xA1b5884235Fe70a512bAbbf94BAaa39aC10CCC1f](https://sepolia.basescan.org/address/0xA1b5884235Fe70a512bAbbf94BAaa39aC10CCC1f) |
+| MicroBidAttester | Creates and validates Proof of Personhood attestations using EAS. | [0xF425aA733164f7f0243A394aa58aa03E4229ABFb](https://sepolia.basescan.org/address/0xF425aA733164f7f0243A394aa58aa03E4229ABFb) |
+| MicroBidTreasury | Manages minting and burning of bid tokens.                        | [0x161b278191a3e00660645fb3dFa7066c900092Ed](https://sepolia.basescan.org/address/0x161b278191a3e00660645fb3dFa7066c900092Ed) |
+| MicroBidAuction  | The main contract that controls auctions.                         | [0x6C11EBE9CDEEA9c0C41c51e144a9C47e1eCF66Da](https://sepolia.basescan.org/address/0x6C11EBE9CDEEA9c0C41c51e144a9C47e1eCF66Da) |
 
 ## Technical details
 
