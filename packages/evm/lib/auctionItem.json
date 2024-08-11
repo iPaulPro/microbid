@@ -1,12 +1,13 @@
 {
   "name": "Ledger Nano S Plus",
-  "description": "This is the first auction item",
+  "description": "Your must-have Web3 companion from Ledger. The Ledger Nano S Plus is a hardware wallet that allows you to store, manage, and secure your crypto assets. It features a USB-C connection and a sleek black design.",
   "image": "ipfs://QmWzCXrGBoknEjrRZ7QJbHZZn7Nw4U5NUzGu6D1ZH8LYZH",
-  "value": 14900,
+  "value": 7900,
+  "url": "https://shop.ledger.com/pages/ledger-nano-s-plus",
   "attributes": {
     "manufacturer": "Ledger",
     "model": "Nano S Plus",
-    "color": "Black",
+    "color": "Matte Black",
     "connection": "USB-C"
   }
 }
