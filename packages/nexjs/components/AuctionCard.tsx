@@ -118,7 +118,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ itemId, userAddress }) => {
               </p>
               <div className="flex items-center justify-between">
                 <span className="text-md font-medium">
-                  {auctionEnded ? "Final" : "Current"} price:
+                  {item.isStarted && auctionEnded ? "Final" : "Current"} price:
                 </span>
                 <span className="text-xl font-bold text-primary">
                   ${(Number(item.totalBids) / 100).toFixed(2)}
@@ -127,7 +127,7 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ itemId, userAddress }) => {
               <div className="flex items-center justify-between">
                 <span className="text-md font-medium">Time Remaining:</span>
                 <span className="text-lg font-bold">
-                  {auctionEnded ? (
+                  {item.isStarted && auctionEnded ? (
                     "Auction ended"
                   ) : item.isStarted ? (
                     <Countdown

@@ -97,7 +97,7 @@ const FeaturedAuction: FC<AuctionCardProps> = ({ itemId }) => {
         </Link>
         <div className="w-full flex items-center justify-between">
           <span className="text-sm text-muted-foreground">
-            {auctionEnded ? "Final" : "Current"} price:
+            {item.isStarted && auctionEnded ? "Final" : "Current"} price:
           </span>
           <span className="text-xl font-bold text-primary">
             ${(Number(item.totalBids) / 100).toFixed(2)}
@@ -106,7 +106,7 @@ const FeaturedAuction: FC<AuctionCardProps> = ({ itemId }) => {
         <div className="w-full flex items-center justify-between">
           <span className="text-sm text-muted-foreground">Time Remaining:</span>
           <span className="text-md font-bold">
-            {auctionEnded ? (
+            {item.isStarted && auctionEnded ? (
               "Auction ended"
             ) : item.isStarted ? (
               <Countdown
@@ -121,7 +121,7 @@ const FeaturedAuction: FC<AuctionCardProps> = ({ itemId }) => {
           </span>
         </div>
         <Link href={`/auction/${item.id}`} className="pt-2 w-full">
-          {auctionEnded ? (
+          {!item.isStarted || auctionEnded ? (
             <Button variant="outline" size="sm" className="w-full">
               View Auction
             </Button>
