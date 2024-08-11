@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
-import { GavelIcon, UserIcon } from "lucide-react";
+import { GavelIcon, GlobeIcon, UserIcon } from "lucide-react";
 import { truncateAddress } from "@/lib/utils";
 import {
   Dialog,
@@ -34,6 +34,13 @@ import {
 import { LoadingSpinner } from "@/components/ui/spinner";
 import { auctionAbi } from "@/lib/abi/auctionAbi";
 import AuctionCard from "@/components/AuctionCard";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 
 export default function Page() {
   const user = useUser();
@@ -219,16 +226,28 @@ export default function Page() {
 
   if (signerStatus.isInitializing) {
     return (
-      <div>
-        <p>Loading...</p>
+      <div className="flex w-full min-h-[100dvh] items-center justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
 
   if (!user) {
     return (
-      <main className="flex min-h-screen flex-col items-center p-24 gap-4 justify-center text-center">
-        <Button onClick={openAuthModal}>Login</Button>
+      <main className="flex min-h-screen flex-col items-center p-24 gap-6 justify-center text-center">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold">Welcome!</h1>
+          <p className="text-muted-foreground">
+            Enter your email to create or access your account.
+          </p>
+        </div>
+        <Button
+          onClick={openAuthModal}
+          size="lg"
+          className="text-lg w-full max-w-[200px]"
+        >
+          Login
+        </Button>
       </main>
     );
   }
@@ -236,14 +255,36 @@ export default function Page() {
   if (!verified) {
     return (
       <main className="flex min-h-screen flex-col items-center p-24 gap-4 justify-center text-center">
-        <IDKitWidget
-          app_id={process.env.NEXT_PUBLIC_WORLD_ID_APP_ID! as `app_${string}`}
-          action={process.env.NEXT_PUBLIC_WORLD_ID_ACTION_ID!}
-          signal={client?.getAddress()}
-          onSuccess={onProofSuccess}
-        >
-          {({ open }) => <Button onClick={open}>Verify with World ID</Button>}
-        </IDKitWidget>
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-2">
+            <CardTitle className="text-2xl font-bold">
+              Verify Your Identity
+            </CardTitle>
+            <CardDescription>
+              Proof of Personhood is a secure and private way to verify your
+              identity online. By completing the World ID verification process,
+              you can establish your digital identity and access a wide range of
+              decentralized applications and services.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            <IDKitWidget
+              app_id={
+                process.env.NEXT_PUBLIC_WORLD_ID_APP_ID! as `app_${string}`
+              }
+              action={process.env.NEXT_PUBLIC_WORLD_ID_ACTION_ID!}
+              signal={client?.getAddress()}
+              onSuccess={onProofSuccess}
+            >
+              {({ open }) => (
+                <Button onClick={open} className="w-full">
+                  <GlobeIcon className="mr-2 h-5 w-5" />
+                  Verify with World ID
+                </Button>
+              )}
+            </IDKitWidget>
+          </CardContent>
+        </Card>
       </main>
     );
   }
@@ -252,7 +293,7 @@ export default function Page() {
     <div className="min-h-[100dvh] bg-muted">
       <header className="px-4 lg:px-6 h-14 flex items-center justify-between">
         <Link
-          href="#"
+          href="/"
           className="flex items-center justify-center gap-2"
           prefetch={false}
         >

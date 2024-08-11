@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { SVGProps } from "react";
-import { GavelIcon } from "lucide-react";
+import { GavelIcon, UserIcon } from "lucide-react";
+import FeaturedAuction from "@/components/FeaturedAuction";
+import Countdown from "react-countdown";
+import { useUser } from "@account-kit/react";
 
 export default function Home() {
+  const user = useUser();
+
   return (
     <div className="flex flex-col min-h-[100dvh]">
       <header className="px-4 lg:px-6 h-14 flex items-center">
@@ -17,29 +21,32 @@ export default function Home() {
           <GavelIcon className="h-6 w-6" />
           <span className="font-bold text-primary">Microbid</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link
-            href="#"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            How it Works
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Featured Items
-          </Link>
+        {user?.address ? (
           <Link
             href="/profile"
-            className="text-sm font-medium hover:underline underline-offset-4"
+            className="ml-auto text-sm font-medium hover:underline underline-offset-4"
             prefetch={false}
           >
-            Join Now
+            <UserIcon className="w-6 h-6 overflow-hidden" />
           </Link>
-        </nav>
+        ) : (
+          <nav className="ml-auto flex gap-4 sm:gap-6">
+            <Link
+              href="#"
+              className="text-sm font-medium hover:underline underline-offset-4"
+              prefetch={false}
+            >
+              How it Works
+            </Link>
+            <Link
+              href="/profile"
+              className="text-sm font-medium hover:underline underline-offset-4"
+              prefetch={false}
+            >
+              Join Now
+            </Link>
+          </nav>
+        )}
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
@@ -92,26 +99,7 @@ export default function Home() {
               </div>
               <div className="bg-muted rounded-xl p-6 flex flex-col gap-4">
                 <div className="bg-background rounded-xl p-4 flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <div className="text-lg font-bold">Current Auction</div>
-                    <div className="bg-primary text-primary-foreground px-2 py-1 rounded-md text-sm font-medium">
-                      Ends in 2h 34m
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-2xl font-bold">
-                      Apple Watch Series 8
-                    </div>
-                    <div className="text-2xl font-bold">$0.25</div>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="text-muted-foreground">Current Bid</div>
-                    <div className="text-muted-foreground">$0.23</div>
-                  </div>
-                  <Button className="w-full text-lg py-6">
-                    <GavelIcon className="mr-2 h-6 w-6" />
-                    Place a bid
-                  </Button>
+                  <FeaturedAuction itemId={1n} />
                 </div>
                 <div className="bg-background rounded-xl p-4 flex flex-col gap-2">
                   <div className="flex items-center justify-between">
@@ -127,15 +115,21 @@ export default function Home() {
                   <div className="grid gap-2">
                     <div className="flex items-center justify-between">
                       <div className="text-sm font-medium">Nintendo Switch</div>
-                      <div className="text-sm font-medium">03:00:00</div>
+                      <div className="text-sm font-medium">
+                        <Countdown date={Date.now() + 3600000} />
+                      </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="text-sm font-medium">Bose Headphones</div>
-                      <div className="text-sm font-medium">06:00:00</div>
+                      <div className="text-sm font-medium">
+                        <Countdown date={Date.now() + 9000000} />
+                      </div>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="text-sm font-medium">Instant Pot</div>
-                      <div className="text-sm font-medium">09:00:00</div>
+                      <div className="text-sm font-medium">
+                        <Countdown date={Date.now() + 14200000} />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -154,14 +148,13 @@ export default function Home() {
                   How it Works
                 </div>
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Provably Fair Penny Auctions
+                  Proof of Personhood
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                   Our penny auctions are powered by blockchain technology,
                   ensuring every participant is a real person verified through
-                  World ID{" "}
-                  <span className="font-bold">Proof of Personhood</span>. Bid
-                  with confidence, knowing the process is transparent and fair.
+                  World ID. Bid with confidence, knowing the process is
+                  transparent and fair.
                 </p>
               </div>
             </div>

@@ -16,14 +16,16 @@ import { GavelIcon, UserIcon } from "lucide-react";
 import Countdown from "react-countdown";
 import useInterval from "use-interval";
 import AuctionAction from "@/components/AuctionAction";
+import { LoadingSpinner } from "@/components/ui/spinner";
+import { truncateAddress } from "@/lib/utils";
 
 export default function Page({ params }: { params: { id: bigint } }) {
-  const signerStatus = useSignerStatus();
+  const ZeroAddress = "0x0000000000000000000000000000000000000000";
 
   const [item, setItem] = useState<AuctionItem>();
   const [auctionEnded, setAuctionEnded] = useState(false);
-  const [bidTokenBalance, setBidTokenBalance] = useState<bigint>(0n);
   const [estimatedEndTime, setEstimatedEndTime] = useState<bigint>();
+  const [isSendingUserOperation, setIsSendingUserOperation] = useState(false);
 
   const { client } = useSmartAccountClient({ type: "LightAccount" });
 
@@ -32,11 +34,10 @@ export default function Page({ params }: { params: { id: bigint } }) {
     transport: http(),
   });
 
-  const { sendUserOperationAsync, isSendingUserOperation } =
-    useSendUserOperation({
-      client,
-      waitForTxn: true,
-    });
+  const { sendUserOperationAsync } = useSendUserOperation({
+    client,
+    waitForTxn: true,
+  });
 
   async function getAuctionItem(itemId: bigint) {
     const data = await publicClient.readContract({
@@ -94,12 +95,14 @@ export default function Page({ params }: { params: { id: bigint } }) {
     () => {
       getAuctionItem(params.id);
     },
-    10000,
+    2000,
     true,
   );
 
   async function placeBid() {
     if (!client) return;
+
+    setIsSendingUserOperation(true);
 
     const data = encodeFunctionData({
       abi: auctionAbi,
@@ -115,10 +118,13 @@ export default function Page({ params }: { params: { id: bigint } }) {
     });
 
     console.log("placeBid: placed");
+    setIsSendingUserOperation(false);
   }
 
   async function submitClaim() {
     if (!client) return;
+
+    setIsSendingUserOperation(true);
 
     const approveUSDCForAuction = encodeFunctionData({
       abi: erc20Abi,
@@ -153,48 +159,16 @@ export default function Page({ params }: { params: { id: bigint } }) {
 
     console.log("submitClaim: claimed");
     setItem((current) => ({ ...current!, isClaimed: true }));
+
+    setIsSendingUserOperation(false);
   }
 
-  // if (error) return <div>Failed to load</div>;
-  if (!item) return <div>Loading...</div>;
-
-  // return (
-  //   <div>
-  //     <h1>{item.metadata.title}</h1>
-  //     <p>{item.metadata.description}</p>
-  //     {item.metadata.image && (
-  //       <img
-  //         src={item.metadata.image.replace("ipfs//", "https://ipfs.io/ipfs/")}
-  //         alt={item.metadata.title}
-  //       />
-  //     )}
-  //     <p>Value: {item.metadata.value}</p>
-  //     <p>Total Bids: {item.totalBids}</p>
-  //     <p>Latest Bidder: {item.latestBidder}</p>
-  //     <p>Claimed: {item.isClaimed ? "Yes" : "No"}</p>
-  //     <p>Auction Ended: {auctionEnded ? "Yes" : "No"}</p>
-  //     {item && !auctionEnded && (
-  //       <button
-  //         className="btn btn-primary"
-  //         disabled={bidTokenBalance === 0n || !item.isStarted}
-  //         onClick={placeBid}
-  //       >
-  //         Place a bid
-  //       </button>
-  //     )}
-  //     {item &&
-  //       auctionEnded &&
-  //       !item.isClaimed &&
-  //       item.latestBidder === client?.getAddress() && (
-  //         <div className="flex flex-col gap-2 justify-center">
-  //           <p>You won the auction!</p>
-  //           <button className="btn btn-primary" onClick={submitClaim}>
-  //             Purchase Item ${(Number(item.totalBids) / 100).toFixed(2)}
-  //           </button>
-  //         </div>
-  //       )}
-  //   </div>
-  // );
+  if (!item)
+    return (
+      <div className="flex w-full min-h-[100dvh] items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
 
   const Completionist = () => <span>Auction ended</span>;
 
@@ -202,7 +176,7 @@ export default function Page({ params }: { params: { id: bigint } }) {
     <div className="flex flex-col min-h-[100dvh]">
       <header className="px-4 lg:px-6 h-14 flex items-center justify-between">
         <Link
-          href="#"
+          href="/"
           className="flex items-center justify-center gap-2"
           prefetch={false}
         >
@@ -249,22 +223,32 @@ export default function Page({ params }: { params: { id: bigint } }) {
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-lg font-medium">Time Remaining:</span>
-              <span className="text-2xl font-bold">
-                {auctionEnded ? (
-                  "Auction ended"
-                ) : item.isStarted ? (
+              <span className="text-lg font-medium">Time remaining:</span>
+              {auctionEnded ? (
+                "Auction ended"
+              ) : item.isStarted ? (
+                <span className="text-2xl font-bold">
                   <Countdown
                     date={new Date(Number(estimatedEndTime) * 1000)}
                     key={estimatedEndTime}
                   >
                     <Completionist />
                   </Countdown>
-                ) : (
-                  "Starting soon..."
-                )}
-              </span>
+                </span>
+              ) : (
+                "Starting soon..."
+              )}
             </div>
+            {item.latestBidder !== ZeroAddress && (
+              <div className="flex items-center justify-between">
+                <span className="text-lg font-medium">Latest bidder:</span>
+                <span className="text-lg font-bold">
+                  {item.latestBidder === client?.getAddress()
+                    ? "You"
+                    : truncateAddress(item.latestBidder)}
+                </span>
+              </div>
+            )}
           </div>
 
           <AuctionAction
@@ -273,6 +257,7 @@ export default function Page({ params }: { params: { id: bigint } }) {
             auctionEnded={auctionEnded}
             submitClaim={submitClaim}
             placeBid={placeBid}
+            isSendingUserOperation={isSendingUserOperation}
           />
         </div>
       </div>

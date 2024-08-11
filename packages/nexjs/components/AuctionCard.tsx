@@ -2,17 +2,11 @@ import React, { useState } from "react";
 import { auctionAbi } from "@/lib/abi/auctionAbi";
 import { createPublicClient, http } from "viem";
 import { baseSepolia } from "viem/chains";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Countdown from "react-countdown";
 import { TrophyIcon } from "lucide-react";
+import Link from "next/link";
 
 interface AuctionCardProps {
   itemId: bigint;
@@ -147,9 +141,11 @@ const AuctionCard: React.FC<AuctionCardProps> = ({ itemId, userAddress }) => {
                   )}
                 </span>
               </div>
-              <Button variant="outline" size="sm" className="mt-2">
-                View Auction
-              </Button>
+              <Link href={`/auction/${item.id}`}>
+                <Button variant="outline" size="sm" className="mt-2">
+                  View Auction
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
