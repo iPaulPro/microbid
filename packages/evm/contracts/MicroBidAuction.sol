@@ -21,7 +21,7 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
     /**
      * @dev The initial duration of the auction in blocks
 	 */
-    uint16 internal constant INITIAL_DURATION_BLOCKS = 300; // around 5 min
+    uint16 internal constant INITIAL_DURATION_BLOCKS = 150; // around 5 min
 
     /**
      * @dev The duration of the auction extension, with each bid placed, in blocks
@@ -135,12 +135,10 @@ contract MicroBidAuction is Ownable, ReentrancyGuard {
 	 */
     function getEstimatedEndTime(uint256 itemId) public view returns (uint256) {
         Types.AuctionItem storage item = auctionItems[itemId];
-        if (block.number > item.endBlock) {
-            return item.endBlock;
+        if (block.number >= item.endBlock) {
+            return 0;
         }
-        uint256 blocksRemaining = item.endBlock > block.number
-            ? item.endBlock - block.number
-            : 0;
+        uint256 blocksRemaining = item.endBlock - block.number;
         return block.timestamp + (blocksRemaining * 2 seconds); // Assuming 2-second block times
     }
 

@@ -1,8 +1,9 @@
 interface AuctionItemMetadata {
-  title: string;
+  name: string;
   description: string;
   image: string;
   value: bigint;
+  url: string;
   attributes: { key: string; value: string }[];
 }
 
