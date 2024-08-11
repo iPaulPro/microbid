@@ -40,6 +40,6 @@ The flow of the project is as follows:
 6. User bids on an auction using MicroBidToken ($MBT).
 7. User wins the auction and purchases the item using $USDC.
 
-## More details
+## More details and demo
 
 https://ethglobal.com/showcase/microbid-dqs54
