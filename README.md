@@ -8,6 +8,21 @@ Alchemy Account Kit is used to create Smart Accounts, allowing users to sign up 
 
 The main issue with existing (off-chain) penny auction sites is the lack of credibility and transparency. In Microbid you can be certain that every bid placed is by a real person, and all transactions are onchain and independently verifiable.
 
+## Demo
+
+A demo of the project can be found at https://microbid.xyz/. The demo is connected to Base Sepolia, a L2 testnet. To use the demo, you must use the World ID simulator to create a Proof of Personhood. The simulator can be found at https://simulator.worldcoin.org/. Follow these steps to create a Proof of Personhood:
+
+1. Log in with an email address and click the magic link sent to your email. (Check your spam folder if you don't see it.)
+2. Click the "Verify with World ID" button. A QR code will appear.
+3. Click the QR code to copy the code.
+4. Open the World ID simulator in a separate window.
+5. Select the "Past Code" option in the World ID simulator and paste the code.
+6. Select "Verify with Orb" in the World ID simulator and then return to the Microbid demo.
+7. Purchase some $MBT bid tokens with $USDC from the profile page
+8. Place a bid on an auction!
+
+A video demo can be found at https://ethglobal.com/showcase/microbid-dqs54.
+
 ## How it's made
 
 This project uses multiple smart contracts deployed to Base L2. World ID is used to create a Proof of Personhood. Once the proof is verified onchain, an attestation is created on the Ethereum Attestation Service. This allows for quick verified bidding without the need to create further proofs. Alchemy Account Kit is used extensively to enable Smart Accounts, requiring only an email address to sign up. All transactions performed by the embedded accounts are sponsored, allowing for signless bidding and usage.
